@@ -8,6 +8,11 @@ import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.sql.DataSource;
 
+import com.youben.batch.batchMapper.MessageRowMapper;
+import com.youben.batch.entity.Message;
+import com.youben.batch.entity.ProcessedMessage;
+import com.youben.batch.listener.MessageProcessListener;
+import com.youben.batch.processor.MessageItemProcessor;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -40,12 +45,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.mark.demo.batch.batchMapper.MessageRowMapper;
-import com.mark.demo.batch.entity.Message;
-import com.mark.demo.batch.entity.ProcessedMessage;
-import com.mark.demo.batch.job.JobQuartz;
-import com.mark.demo.batch.listener.MessageProcessListener;
-import com.mark.demo.batch.processor.MessageItemProcessor;
 
 /*
 *hxp(hxpwangyi@126.com)
