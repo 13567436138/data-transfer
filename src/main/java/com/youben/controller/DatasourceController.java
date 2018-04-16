@@ -5,6 +5,7 @@ import com.youben.base.PaginateResult;
 import com.youben.base.Pagination;
 import com.youben.entity.Datasource;
 import com.youben.entity.JsonMessage;
+import com.youben.entity.JsonResult;
 import com.youben.entity.Menu;
 import com.youben.service.DatasourceService;
 import com.youben.utils.JdbcUtil;
@@ -44,9 +45,11 @@ public class DatasourceController extends GenericController {
 
     @RequestMapping("/add")
     @ResponseBody
-    public boolean add(Datasource datasource){
+    public JsonResult add(Datasource datasource){
         datasourceService.insert(datasource);
-        return true;
+        JsonResult jsonResult=new JsonResult();
+        jsonResult.setResult("ok");
+        return jsonResult;
     }
 
     @RequestMapping("/list")

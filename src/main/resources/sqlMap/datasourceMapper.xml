@@ -1,7 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.youben.mapper.DatasourceMapper">
+    <resultMap id="datasourceMap" type="Datasource">
+        <result column="id" property="id" />
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="ip" property="ip"/>
+        <result column="port" property="port"/>
+        <result column="databaseName" property="databaseName"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+    </resultMap>
 
+    <insert id="insert" parameterType="Datasource">
+        insert into datasource(
+          name,
+          type,
+          ip,
+          port,
+          databaseName,
+          username,
+          password
+        )values(
+           #{name},
+           #{type},
+           #{ip},
+           #{port},
+           #{databaseName},
+           #{username},
+           #{password}
+        )
 
+    </insert>
+
+    <select id="findList" parameterType="Datasource" resultMap="datasourceMap">
+        select
+            id,
+            name,
+            type,
+            ip,
+            port,
+            databaseName,
+            username,
+            password
+
+        from datasource d
+        <where>
+            1=1
+            <if test="name!=null ">
+                and d.name like '${name}%'
+            </if>
+            <if test="type==1 or type==2">
+                and d.type=#{type}
+            </if>
+            <if test="ip!=null and ip!=''">
+                and d.ip=#{ip}
+            </if>
+            <if test="databaseName!=null and databaseName!=''">
+                and d.databaseName=#{databaseName}
+            </if>
+        </where>
+    </select>
 </mapper>
 

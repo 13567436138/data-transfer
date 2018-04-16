@@ -7,8 +7,11 @@
     <base id="base" href="${contextPath}">
    <#include "/common/common.ftl">
     <script type="text/javascript"  charset="UTF-8">
-        var searchUrl = "${contextPath}/datasource/data";
+        var searchUrl = "${contextPath}/datasource/list/data";
         var testUrl="${contextPath}/datasource/test";
+        var insertUrl="${contextPath}/datasource/add";
+        var updateUrl="${contextPath}/datasource/update";
+        var deleteUrl="${contextPath}/datasource/delete";
         $(function() {
             $('#dataList').datagrid({
                 title:'列表',
