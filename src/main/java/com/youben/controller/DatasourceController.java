@@ -4,9 +4,7 @@ import com.youben.base.GenericController;
 import com.youben.base.PaginateResult;
 import com.youben.base.Pagination;
 import com.youben.entity.Datasource;
-import com.youben.entity.JsonMessage;
 import com.youben.entity.JsonResult;
-import com.youben.entity.Menu;
 import com.youben.service.DatasourceService;
 import com.youben.utils.JdbcUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.crypto.Data;
 
 @Controller
 @RequestMapping("/datasource")
@@ -25,9 +22,11 @@ public class DatasourceController extends GenericController {
 
     @RequestMapping("/update")
     @ResponseBody
-    public boolean update(Datasource datasource){
+    public JsonResult update(Datasource datasource){
          datasourceService.update(datasource);
-         return true;
+         JsonResult result=new JsonResult();
+         result.setResult("ok");
+         return  result;
     }
 
     @RequestMapping("/test")
@@ -38,9 +37,11 @@ public class DatasourceController extends GenericController {
 
     @RequestMapping("/delete")
     @ResponseBody
-    public boolean delete(String id){
-        datasourceService.delete(id);
-        return true;
+    public JsonResult delete(String ids){
+        datasourceService.delete(ids);
+        JsonResult result=new JsonResult();
+        result.setResult("ok");
+        return  result;
     }
 
     @RequestMapping("/add")

@@ -530,6 +530,84 @@ function Confirm(msg, control) {
 	});
 }
 
+
+function showDatasourceUpdate(jsonParam) {
+    jsonParam = jsonParam || {};
+    jsonParam.updateUrl = isEmpty(jsonParam.updateUrl) ? updateUrl
+        : jsonParam.updateUrl;
+    jsonParam.title = isEmpty(jsonParam.title) ? $('#addwindow').attr('title')
+        : jsonParam.title;
+    delError();
+    var rows = $('#dataList').datagrid("getSelections");
+    if (rows.length == 0) {
+        $.messager.alert('提示框', '请选择修改数据', 'warning');
+        return;
+    }
+    if(rows.length!=1){
+        $.messager.alert('提示框', '请选择一条修改数据', 'warning');
+        return;
+    }
+    var data = rows[0];
+    $(jsonParam).attr('data', data);
+    //更新前处理
+    if (isFunction(jsonParam.preHandler))
+        jsonParam.preHandler(jsonParam);
+    else
+        setFormValue("addForm", data);
+    setReadonly(jsonParam.readonlyFields);
+
+    var validateName = $('#addForm').attr('updateValidate');
+    initDlg('#addwindow').dialog( {
+        title : jsonParam.title,
+        buttons : [ {
+            text:'测试',
+            iconCls:'icon-ok',
+            handler:function(){
+                //确定按钮点击后的具体处理函数
+                if (isFunction(jsonParam.insertHandler))
+                {
+                    jsonParam.insertHandler(jsonParam);
+                }else{
+                    _testHandler(jsonParam.url);
+                }
+
+            }
+        },{
+            text : '提交',
+            iconCls : 'icon-ok',
+            handler : function() {
+                //若form中绑定了检查方法，则先执行检查
+                if(!isEmpty(validateName)){
+                    var fc = eval(validateName);
+                    var checkResult = fc.call();
+                    if(!checkResult){
+                        return checkResult;
+                    }
+                }
+                //确定按钮点击后的具体处理函数
+                if (isFunction(jsonParam.updateHandler)) {
+                    jsonParam.updateHandler(jsonParam);
+                } else{
+                    doEdit(jsonParam.updateUrl);
+                }
+
+            }
+        }, {
+            text : '取消',
+            iconCls : 'icon-cancel',
+            handler : function() {
+                $("#addForm")[0].reset();
+                $('#addwindow').dialog('close');
+            }
+        } ]
+    });
+    //新增后处理
+    if (isFunction(jsonParam.afHandler))
+        jsonParam.afHandler(jsonParam);
+    $('#addwindow').dialog('open');
+
+}
+
 /**
  * jsonParam 中的参数有 updateUrl,updateHandler,preHandler,afHandler,readonlyFields
  * @param jsonParam

@@ -75,7 +75,7 @@
         <div id="tb" style="padding:5px;height:auto">
             <div style="margin-bottom:5px">
                 <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="showAddDatasourceWindow({title:'新增'})">新增</a>|
-                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="showUpdate({title:'修改',readonlyFields:['id']});">修改</a>|
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="showDatasourceUpdate({title:'修改',readonlyFields:['id']});">修改</a>|
                 <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delRowData({id:'id'});">删除</a>
             </div>
             <div>
@@ -102,6 +102,7 @@
 <div style="visibility:hidden" >
     <div id="addwindow"  title="添加" style="width:600px;height:350px;padding:10px">
         <form id='addForm' action="" method="post">
+            <input type="hidden" id="id" name="id"/>
             <table>
                 <tr>
                     <td>名称:</td>

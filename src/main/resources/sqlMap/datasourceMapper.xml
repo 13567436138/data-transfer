@@ -33,6 +33,15 @@
 
     </insert>
 
+    <delete id="delete" parameterType="String">
+        delete from datasource where id=#{id}
+    </delete>
+
+    <update id="updateByPrimaryKey" parameterType="Datasource">
+        update datasource set name=#{name},type=#{type},ip=#{ip},port=#{port},databaseName=#{databaseName},username=#{username},password=#{password}
+        where id=#{id}
+    </update>
+
     <select id="findList" parameterType="Datasource" resultMap="datasourceMap">
         select
             id,
