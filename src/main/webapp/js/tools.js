@@ -344,7 +344,6 @@ function showAddwindow(jsonParam){
 	jsonParam.title=isEmpty(jsonParam.title)?$('#addwindow').attr('title'):jsonParam.title;
 	//新增前处理
 	if(typeof jsonParam.preHandler  === "function") jsonParam.preHandler();
-	
 	initDlg('#addwindow').dialog({title:jsonParam.title,buttons:[{
 			text:'保存',
 			iconCls:'icon-ok',

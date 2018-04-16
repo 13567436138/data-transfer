@@ -1,5 +1,4 @@
 <#assign contextPath=request.contextPath />
-<#assign form=JspTaglibs["/WEB-INF/tag/spring-form.tld"]> 
 
 <!DOCTYPE html PUBLIC "-/W3C/DTD XHTML 1.0 Transitional/EN" "http:/www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
 <html>
@@ -65,14 +64,13 @@
   </head>
   
   <body class="easyui-layout" >
-  <@form.form id="_csrf-form" cssStyle="display: none"/>
 	<div  region="center" >
 		<div id='dataList'>
 			<div id="tb" style="padding:5px;height:auto">
 		<div style="margin-bottom:5px">
-			<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="showAddwindow({title:'新增'})">新增</a>|
-			<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="showUpdate({title:'修改',readonlyFields:['departmentcode']});">修改</a>|
-			<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delRowData({id:'departmentcode'});">删除</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="showAddwindow({title:'新增'})">新增</a>|
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="showUpdate({title:'修改',readonlyFields:['id']});">修改</a>|
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delRowData({id:'id'});">删除</a>
 		</div>
 		<div>
 			<form  id='searchForm' action="" method="post">
@@ -93,21 +91,21 @@
 				<table>
 						<tr>
 							<td>菜单名称:</td>
-							<td><input type="text" id="departmentcode" name="departmentcode" style="width:120px"/></td>
+							<td><input type="text" id="menuName" name="menuName" style="width:120px"/></td>
 							<td>菜单描述:</td>
-							<td><input type="text" id="departmentname" name="departmentname" style="width:120px"/></td>
+							<td><input type="text" id="menuDesc" name="menuDesc" style="width:120px"/></td>
 						</tr>
 						<tr>
 							<td>菜单连接:</td>
-							<td><input type="text" id="deptdescription" name="deptdescription" style="width:120px"/></td>
+							<td><input type="text" id="link" name="link" style="width:120px"/></td>
 							<td>菜单序号:</td>
-							<td><input type="text" id="remarks" name="remarks" style="width:120px"/></td>
+							<td><input type="text" id="order" name="order" style="width:120px"/></td>
 						</tr>
 						<tr>
 							<td>父菜单:</td>
-							<td><input type="text" id="operatorbankcode" name="operatorbankcode" style="width:120px"/></td>
-							<td>菜单序号:</td>
-							<td><input type="text" id="operatorcode" name="operatorcode" style="width:120px"/></td>
+                            <td><input type="text" id="parent.id" name="parent.id" style="width:120px"/></td>
+							<td>菜单图标:</td>
+							<td><input type="text" id="icon" name="icon" style="width:120px"/></td>
 						</tr>
 						
 				</table>

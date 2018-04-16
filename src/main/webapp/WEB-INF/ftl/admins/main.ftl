@@ -1,5 +1,4 @@
 <#assign contextPath=request.contextPath />
-<#assign form=JspTaglibs["/WEB-INF/tag/spring-form.tld"]> 
 
 <!DOCTYPE html PUBLIC "-/W3C/DTD XHTML 1.0 Transitional/EN" "http:/www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  
 <html xmlns="http:/www.w3.org/1999/xhtml">  
@@ -11,7 +10,6 @@
 
 </head>  
 <body class="easyui-layout">
-	<@form.form id="_csrf-form" cssStyle="display: none"/>
 
 	<div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;padding:10px">
 		<h1>mark's technic world</h1>

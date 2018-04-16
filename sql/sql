@@ -1,0 +1,13 @@
+DROP TABLE IF EXISTS `menu`;
+CREATE TABLE `menu` (
+  `menuId` int(11) NOT NULL AUTO_INCREMENT,
+  `pid` int(11) DEFAULT NULL,
+  `menuName` varchar(40) DEFAULT NULL,
+  `menuDesc` varchar(200) DEFAULT NULL,
+  `link` varchar(200) DEFAULT NULL,
+  `order` int ,
+  PRIMARY KEY (`menuId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values(-1,'系统管理','系统管理',null,1);
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='系统管理')a),'菜单管理','菜单管理','/menu/list',1);
