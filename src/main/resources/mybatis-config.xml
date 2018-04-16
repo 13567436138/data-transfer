@@ -29,12 +29,4 @@
 
     </settings>
 
-    <plugins>
-        <plugin interceptor="com.mark.demo.shiro.mybatis.PaginationInterceptor"/>
-        <plugin interceptor="com.mark.demo.shiro.mybatis.cache.RedisCachingExecutor">
-            <property name="dependency" value="dependencys.xml"/>
-            <property name="cacheEnabled" value="true"/>
-        </plugin>
-    </plugins>
-
 </configuration>

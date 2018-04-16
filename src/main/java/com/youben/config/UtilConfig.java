@@ -1,14 +1,9 @@
 package com.youben.config;
 
+import com.youben.utils.SpringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
-
-import com.mark.demo.shiro.session.RedisSessionManager;
-import com.mark.demo.shiro.utils.JedisUtils;
-import com.mark.demo.shiro.utils.SpringUtils;
-
 /*
 *hxp(hxpwangyi@126.com)
 *2017年9月16日
@@ -25,16 +20,5 @@ public class UtilConfig {
 		return springUtils;
 	}
 	
-	@Bean
-	public RedisSessionManager redisSessionManager(){
-		RedisSessionManager manager=new RedisSessionManager();
-		return manager;
-	} 
-	
-	@Bean
-	public JedisUtils jedisUtil(RedisTemplate<String, Object> redisTemplate){
-		JedisUtils jedisUtil=new JedisUtils();
-		jedisUtil.setRedisTemplate(redisTemplate);
-		return jedisUtil;
-	}
+
 }

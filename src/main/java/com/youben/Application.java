@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableAutoConfiguration
 @SpringBootApplication
 @ComponentScan
-@MapperScan("com.youben.shiro.mapper")
+@MapperScan("com.youben.mapper")
 public class Application {
 
 	public static void main(String[] args) {

@@ -1,10 +1,10 @@
 package com.youben.mapper;
 
-import java.util.List;
+import com.youben.anno.MyBatisDao;
+import com.youben.base.GenericMapper;
+import com.youben.entity.Menu;
 
-import com.mark.demo.shiro.anno.MyBatisDao;
-import com.mark.demo.shiro.base.GenericMapper;
-import com.mark.demo.shiro.entity.Menu;
+import java.util.List;
 
 /*
 *hxp(hxpwangyi@126.com)
@@ -12,7 +12,7 @@ import com.mark.demo.shiro.entity.Menu;
 *
 */
 @MyBatisDao
-public interface MenuMapper extends GenericMapper<Menu>{
+public interface MenuMapper extends GenericMapper<Menu> {
 	List<Menu> getMenuTopLever();
 	List<Menu> getMenuChildren(int pid);
 	void updateMenu(Menu menu);
