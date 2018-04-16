@@ -11,8 +11,20 @@ CREATE TABLE `menu` (
 
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values(-1,'系统管理','系统管理',null,1);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='系统管理')a),'菜单管理','菜单管理','/menu/list',1);
-insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='系统管理')a),'数据源管理','数据源管理','/dataSource/list',2);
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='系统管理')a),'数据源管理','数据源管理','/datasource/list',2);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values(-1,'导数据管理','导数据管理',null,2);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'发起导数据','发起导数据','/transfer/new',1);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'任务列表','任务列表','/transfer/taskList',2);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'数据库透视','数据库透视','/transfer/databaseInfo',3);
+
+DROP TABLE IF EXISTS `datasource`;
+create table datasource(
+  id int(11) primary key auto_increment,
+  name varchar(25),
+  type int ,
+  ip varchar(25),
+  port varchar(5),
+  databaseName varchar(25),
+  username varchar(35),
+  password varchar(25)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -69,4 +69,12 @@ public abstract class GenericServiceImpl<T extends GenericEntity> implements Gen
         pageResult.setTotal(page.getTotalCount());
         return pageResult;
     }
+
+    /**
+     * 更新
+     * @param entity
+     */
+    public void update(T entity){
+        dao.updateByPrimaryKey(entity);
+    }
 }

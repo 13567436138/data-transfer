@@ -8,6 +8,8 @@ public class Datasource  extends GenericEntity{
     private String databaseName;
     private String username;
     private String password;
+    private String name;
+    private int type; //1 from ,2 to
 
     public String getIp() {
         return ip;
