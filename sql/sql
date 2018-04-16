@@ -11,3 +11,8 @@ CREATE TABLE `menu` (
 
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values(-1,'系统管理','系统管理',null,1);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='系统管理')a),'菜单管理','菜单管理','/menu/list',1);
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='系统管理')a),'数据源管理','数据源管理','/dataSource/list',2);
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values(-1,'导数据管理','导数据管理',null,2);
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'发起导数据','发起导数据','/transfer/new',1);
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'任务列表','任务列表','/transfer/taskList',2);
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'数据库透视','数据库透视','/transfer/databaseInfo',3);
