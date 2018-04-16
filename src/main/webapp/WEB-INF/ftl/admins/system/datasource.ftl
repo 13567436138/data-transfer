@@ -7,7 +7,8 @@
     <base id="base" href="${contextPath}">
    <#include "/common/common.ftl">
     <script type="text/javascript"  charset="UTF-8">
-        var searchUrl = "${contextPath}/menu/datasource/data";
+        var searchUrl = "${contextPath}/datasource/data";
+        var testUrl="${contextPath}/datasource/test";
         $(function() {
             $('#dataList').datagrid({
                 title:'列表',
@@ -70,7 +71,7 @@
     <div id='dataList'>
         <div id="tb" style="padding:5px;height:auto">
             <div style="margin-bottom:5px">
-                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="showAddwindow({title:'新增'})">新增</a>|
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="showAddDatasourceWindow({title:'新增'})">新增</a>|
                 <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="showUpdate({title:'修改',readonlyFields:['id']});">修改</a>|
                 <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delRowData({id:'id'});">删除</a>
             </div>
@@ -120,7 +121,7 @@
                     <td>用户名:</td>
                     <td><input type="text" id="username" name="username" style="width:120px"/></td>
                     <td>密码:</td>
-                    <td><input type="text" id="密码" name="密码" style="width:120px"/></td>
+                    <td><input type="text" id="password" name="password" style="width:120px"/></td>
                 </tr>
                 <tr>
                     <td>数据库:</td>

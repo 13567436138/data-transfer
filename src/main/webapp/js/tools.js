@@ -373,6 +373,57 @@ function showAddwindow(jsonParam){
 	$('#addwindow').dialog('open');
 }
 
+function showAddDatasourceWindow(jsonParam){
+    jsonParam=jsonParam||{};
+    $('#addForm')[0].reset();
+    $('#addwindow').removeAttr("disabled","disabled");
+    $('#addwindow input').removeAttr("readonly");
+    delError();
+    jsonParam.title=isEmpty(jsonParam.title)?$('#addwindow').attr('title'):jsonParam.title;
+    //新增前处理
+    if(typeof jsonParam.preHandler  === "function") jsonParam.preHandler();
+    initDlg('#addwindow').dialog({title:jsonParam.title,buttons:[{
+            text:'测试',
+            iconCls:'icon-ok',
+            handler:function(){
+                //确定按钮点击后的具体处理函数
+                if (isFunction(jsonParam.insertHandler))
+                {
+                    jsonParam.insertHandler(jsonParam);
+                }else{
+                    _testHandler(jsonParam.url);
+                }
+
+            }
+        },{
+            text:'保存',
+            iconCls:'icon-ok',
+            handler:function(){
+                //确定按钮点击后的具体处理函数
+                if (isFunction(jsonParam.insertHandler))
+                {
+                    jsonParam.insertHandler(jsonParam);
+                }else{
+                    _insertHandler(jsonParam.url);
+                }
+
+            }
+        },{
+            text:'取消',
+            iconCls:'icon-cancel',
+            handler:function(){
+                //取消前处理
+                if(typeof jsonParam.clearHandler  === "function")
+                    jsonParam.clearHandler();
+                else
+                    $('#addwindow').dialog('close');
+            }
+        }]});
+    //新增后处理
+    if(isFunction(jsonParam.afHandler)) jsonParam.afHandler(jsonParam);
+    $('#addwindow').dialog('open');
+}
+
 var _insertHandler = function(url) {
 	$('#addForm').form.url = url || insertUrl; //表单提交路径
 	submitForm("addForm", $('#addForm').form.url, function(data) {
@@ -391,6 +442,19 @@ var _insertHandler = function(url) {
 			//showBox("提示信息",data.result,'warning');
 		}
 	});
+}
+
+var _testHandler = function(url) {
+    $('#addForm').form.url = url || testUrl; //表单提交路径
+    submitForm("addForm", $('#addForm').form.url, function(data) {
+        data = convertJson(data);
+        if (data.result) {
+            showBox("提示信息", "测试成功", 'info');
+        } else {
+            data.errorMsg="测试失败";
+            showError(data);
+        }
+    });
 }
 
 function showError(data) {
