@@ -10,4 +10,6 @@ import com.youben.entity.Task;
  * Time: 10:51
  */
 public interface TaskService extends GenericService<Task> {
+    boolean checkIfTaskExistsByMainTaskId(int mainTaskId);
+    int countRecord(int mainTaskId,String recordStartTime,String recordEndTime);
 }

@@ -87,5 +87,8 @@
             d.type=#{type}
         </where>
     </select>
+    <select id="selectByPrimaryKey" parameterType="String"  resultMap="datasourceMap">
+        select * from datasource where id=#{id}
+    </select>
 </mapper>
 

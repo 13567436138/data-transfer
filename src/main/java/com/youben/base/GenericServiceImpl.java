@@ -77,4 +77,8 @@ public abstract class GenericServiceImpl<T extends GenericEntity> implements Gen
     public void update(T entity){
         dao.updateByPrimaryKey(entity);
     }
+
+    public T getById(String refrenceId){
+        return dao.selectByPrimaryKey(refrenceId);
+    }
 }

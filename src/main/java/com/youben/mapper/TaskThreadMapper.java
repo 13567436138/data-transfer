@@ -3,14 +3,14 @@ package com.youben.mapper;
 import com.youben.anno.MyBatisDao;
 import com.youben.base.GenericMapper;
 import com.youben.entity.Task;
+import com.youben.entity.TaskThread;
 
 /**
  * Description:
  * User: hxp
  * Date: 2018-04-17
- * Time: 10:50
+ * Time: 13:03
  */
 @MyBatisDao
-public interface TaskMapper extends GenericMapper<Task> {
-    int countByMainTaskId(int mainTaskId);
+public interface TaskThreadMapper extends GenericMapper<TaskThread>{
 }

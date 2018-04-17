@@ -81,8 +81,71 @@
                 }
             }
         });
-
 	});
+
+   function createTask(jsonParam) {
+       var rows = $('#dataList').datagrid("getSelections");
+       if (rows.length != 1) {
+           $.messager.alert('提示框', '请选择一个主任务', 'warning');
+           return;
+       }
+       jsonParam=jsonParam||{};
+       $('#createTaskForm')[0].reset();
+       $('#createTaskWindow').removeAttr("disabled","disabled");
+       $('#createTaskWindow input').removeAttr("readonly");
+
+       jsonParam.title=isEmpty(jsonParam.title)?$('#createTaskWindow').attr('title'):jsonParam.title;
+
+       initDlg('#createTaskWindow').dialog({title:jsonParam.title,buttons:[{
+               text:'迁移规模',
+               iconCls:'icon-ok',
+               handler:function(){
+                   $.ajax({
+                       type: "POST",
+                       url: "${contextPath}/transfer/task/countRecord",
+                       data: {mainTaskId:rows[0].id,recordStartTime:$("#recordStartTime").val(),recordEndTime:$("#recordEndTime").val()},
+                       dataType: "json",
+                       success: function(data){
+                           showBox("提示信息", "一共需要迁移"+data+"条数据", 'info');
+                       }
+                   });
+
+               }
+           },{
+               text:'创建',
+               iconCls:'icon-ok',
+               handler:function(){
+                   $.ajax({
+                       type: "POST",
+                       url: "${contextPath}/transfer/task/create",
+                       data: {mainTaskId:rows[0].id,name:$("#craateTaskName").val(),recordStartTime:$("#recordStartTime").val(),recordEndTime:$("#recordEndTime").val()},
+                       dataType: "json",
+                       success: function(data){
+                           $('#createTaskForm').form('clear'); // 清空form
+                           $('#dataList').datagrid('clearSelections');//清空选择
+                           $('#createTaskWindow').dialog('close');
+                           if (data.result=='ok') {
+                               showBox("提示信息", "创建成功", 'info');
+                           } else {
+                               showError(data);
+                           }
+                       }
+                   });
+
+               }
+           },{
+               text:'取消',
+               iconCls:'icon-cancel',
+               handler:function(){
+                   //取消前处理
+                   if(typeof jsonParam.clearHandler  === "function")
+                       jsonParam.clearHandler();
+                   else
+                       $('#addwindow').dialog('close');
+               }
+           }]});
+       $('#createTaskWindow').dialog('open');
+      }
 	</script>
   </head>
   
@@ -94,6 +157,7 @@
 			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="showAddwindow({title:'新增'})">新增</a>|
 			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="showUpdate({title:'修改',readonlyFields:['id']});">修改</a>|
 			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delRowData({id:'id'});">删除</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="createTask({title:'创建任务'});">创建任务</a>
 		</div>
 		<div>
 			<form  id='searchForm' action="" method="post">
@@ -134,7 +198,33 @@
 				</table>
 			</form>
 		</div>
+
 	</div>
+  <div style="visibility:hidden" >
+      <div id="createTaskWindow"  title="创建任务" style="width:600px;height:350px;padding:10px">
+          <form id='createTaskForm' action="" method="post">
+              <table>
+                  <tr>
+                      <td>任务名称:</td>
+                      <td><input type="text" id="craateTaskName" name="name" style="width:420px"/></td>
+                  </tr>
+                  <tr>
+                      <td>开始时间:</td>
+                      <td>
+                          <input id="recordStartTime" type="text" class="easyui-datebox" required="required">
+                      </td>
+                  </tr>
+                  <tr>
+                      <td>结束时间:</td>
+                      <td>
+                          <input id="recordEndTime" type="text" class="easyui-datebox" required="required">
+                      </td>
+                  </tr>
+
+              </table>
+          </form>
+      </div>
+  </div>
 	
   </body>
 </html>

@@ -1,7 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.youben.mapper.TaskMapper">
+    <resultMap id="taskMap" type="Task">
+        <result column="id" property="id" />
+        <result column="mainTaskId" property="mainTaskId" />
+        <result column="name" property="name" />
+        <result column="recordCount" property="recordCount" />
+        <result column="successCount" property="successCount" />
+        <result column="failCount" property="failCount" />
+        <result column="startTime" property="startTime" />
+        <result column="stopTime" property="stopTime" />
+        <result column="recordModifyTimeBegin" property="recordModifyTimeBegin" />
+        <result column="recordModifyTimeEnd" property="recordModifyTimeEnd" />
+        <result column="status" property="status" />
+        <result column="runCount" property="runCount" />
+        <result column="mainTaskName" property="mainTaskName" />
+    </resultMap>
+    <select id="countByMainTaskId" parameterType="int" resultType="int">
+        select count(1) from task where mainTaskId=#{mainTaskId}
+    </select>
 
-    
+    <insert id="insert" parameterType="Task">
+        insert into task(
+          mainTaskId,
+          name,
+          recordCount,
+          successCount,
+          failCount,
+          startTime,
+          stopTime,
+          recordModifyTimeBegin,
+          recordModifyTimeEnd,
+          status,
+          runCount
+        )values(
+          #{mainTaskId},
+          #{name},
+          #{recordCount},
+          #{successCount},
+          #{failCount},
+          #{startTime},
+          #{stopTime},
+          #{recordModifyTimeBegin},
+          #{recordModifyTimeEnd},
+          #{status},
+          #{runCount}
+        )
+    </insert>
+
+    <select id="findList" parameterType="Task" resultMap="taskMap">
+        select
+          a.*,
+          b.name mainTaskName
+        from task a join maintask b on a.mainTaskId=b.id
+        <where>
+            1=1
+            <if test="mainTaskName!=null and mainTaskName!=''">
+                and b.name like '%${mainTaskName}%'
+            </if>
+            <if test="name!=null and name!=''">
+                and a.name like '%${name}%'
+            </if>
+            <if test="startTime!=null">
+                and a.startTime &gt; #{startTime}
+            </if>
+            <if test="stopTime!=null">
+               and a.stopTime &lt;=#{stopTime}
+            </if>
+            <if test="recordModifyTimeBegin!=null">
+                and a.recordModifyTimeBegin &gt;#{recordModifyTimeBegin}
+            </if>
+            <if test="recordModifyTimeEnd!=null">
+                and a.recordModifyTimeEnd &lt;=#{recordModifyTimeEnd}
+            </if>
+            <if test="status!=0">
+                and a.status=#{status}
+            </if>
+        </where>
+
+    </select>
 </mapper>
 

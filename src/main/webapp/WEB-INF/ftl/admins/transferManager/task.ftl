@@ -7,7 +7,7 @@
    <base id="base" href="${contextPath}">  
    <#include "/common/common.ftl">
    <script type="text/javascript"  charset="UTF-8">
-   var searchUrl = "${contextPath}/transfer/mainTask/list/data";
+   var searchUrl = "${contextPath}/transfer/task/list/data";
    var updateUrl = "${contextPath}/departments/update.do";
    var insertUrl = "${contextPath}/transfer/mainTask/add";
    var deleteUrl = "${contextPath}/departments/delete.do";
@@ -30,12 +30,16 @@
 	        url:searchUrl, 
 	        toolbar:'#tb',
 	        columns:[[   
-                   		{field:'id',title:'主任务编号',width:100,align:'center'},
-                   		{field:'name',title:'名称',width:400,align:'center'},
-                   		{field:'fromName',title:'来源',width:500,align:'center'},
-                   		{field:'toName',title:'目标',width:500,align:'center'},
-						{field:'fromSource',title:'',width:1,align:'center',hidden:true},
-						{field:'toSource',title:'',width:1,align:'center',hidden:true},
+                   		{field:'id',title:'任务编号',width:100,align:'center'},
+                   		{field:'mainTaskName',title:'主任务名称',width:400,align:'center'},
+                   		{field:'recordCount',title:'记录数',width:150,align:'center'},
+                   		{field:'successCount',title:'成功记录数',width:150,align:'center'},
+						{field:'failCount',title:'失败记录数',width:150,align:'center'},
+						{field:'startTime',title:'开始时间',width:150,align:'center'},
+                		{field:'stopTime',title:'结束时间',width:150,align:'center'},
+                		{field:'recordModifyTimeBegin',title:'记录开始时间',width:150,align:'center'},
+                		{field:'recordModifyTimeEnd',title:'记录结束时间',width:150,align:'center'},
+                		{field:'status',title:'状态',width:150,align:'center'}
 	        ]],
 	        
 	         onBeforeLoad: function (params) {
@@ -91,14 +95,32 @@
 		<div id='dataList'>
 			<div id="tb" style="padding:5px;height:auto">
 		<div style="margin-bottom:5px">
-			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="showAddwindow({title:'新增'})">新增</a>|
-			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="showUpdate({title:'修改',readonlyFields:['id']});">修改</a>|
-			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delRowData({id:'id'});">删除</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="enableTask({title:'启动'})">启动任务</a>|
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="reenableTask({title:'重新启动'});">重新启动任务</a>|
 		</div>
 		<div>
 			<form  id='searchForm' action="" method="post">
-				名称:
-				<input type="text" id="name" name="name"/>
+				主任务名称:
+				<input type="text" id="mainTaskName" name="mainTaskName"/>
+                任务开始时间:
+                <input id="startTimeStr" name="startTimeStr" type="text" class="easyui-datebox" required="required" style="width: 200px;">
+                任务结束时间:
+                <input id="stopTimeStr" name="stopTimeStr" type="text" class="easyui-datebox" required="required"></br>
+                记录开始时间:
+                <input id="recordModifyTimeBeginStr" name="recordModifyTimeBeginStr" type="text" class="easyui-datebox" required="required">
+                记录结束时间:
+                <input id="recordModifyTimeEndStr" name="recordModifyTimeEndStr" type="text" class="easyui-datebox" required="required">
+                任务状态:
+                <select name="status">
+					<option value="0">全部</option>
+					<option value="1">新建</option>
+                    <option value="2">启动运行中</option>
+                    <option value="3">成功</option>
+                    <option value="4">重新启动运行中</option>
+                    <option value="5">重新启动成功</option>
+                    <option value="6">失败</option>
+                    <option value="7">重新启动失败</option>
+				</select>
 				<input type="button" onclick="loadList(1);" value="查询"/>
 			</form>
 		</div>
@@ -106,35 +128,7 @@
 		</div>
 	</div>
 	
-	<div style="visibility:hidden" >
-		<div id="addwindow"  title="添加" style="width:600px;height:350px;padding:10px">
-			<form id='addForm' action="" method="post">
-				<table>
-						<tr>
-							<td>任务名称:</td>
-							<td><input type="text" id="name" name="name" style="width:420px"/></td>
-						</tr>
-						<tr>
-							<td>来源:</td>
-							<td>
-								<select id="fromSource" name="fromSource" style="width:420px">
 
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<td>目标:</td>
-                            <td>
-								<select id="toSource" name="toSource" style="width:420px">
-
-								</select>
-							</td>
-						</tr>
-						
-				</table>
-			</form>
-		</div>
-	</div>
 	
   </body>
 </html>

@@ -39,5 +39,9 @@
         )
 
     </insert>
+
+    <select id="selectByPrimaryKey" parameterType="String" resultMap="mainTaskMap">
+        select * from maintask where id=#{id}
+    </select>
 </mapper>
 

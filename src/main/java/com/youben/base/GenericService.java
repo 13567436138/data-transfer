@@ -14,5 +14,6 @@ public interface GenericService <T extends GenericEntity>{
 	int deleteByPrimaryKey(String refrenceid);
 	PaginateResult<T> findPage(Pagination page, T entity);
 	void update(T entity);
+	T getById(String refrenceId);
 	
 }

@@ -39,4 +39,22 @@ public class JdbcUtil {
         return false;
 
     }
+
+    public static Connection getConnection(Datasource datasource){
+        String driver="com.mysql.jdbc.Driver";  //获取mysql数据库的驱动类
+        String url="jdbc:mysql://"+datasource.getIp()+":"+datasource.getPort()+"/"+datasource.getDatabaseName(); //连接数据库（kucun是数据库名）
+        Connection conn=null;
+        try{
+            Class.forName(driver);
+            conn= DriverManager.getConnection(url,datasource.getUsername(),datasource.getPassword());//获取连接对
+            if(conn!=null&&!conn.isClosed()){
+                return conn;
+            }
+        }catch(ClassNotFoundException e){
+            e.printStackTrace();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

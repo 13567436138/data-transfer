@@ -16,6 +16,8 @@ insert into menu(pid,menuName,menuDesc,`link`,`order`)values(-1,'导数据管理
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'发起导数据','发起导数据','/transfer/new',1);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'主任务列表','主任务列表','/transfer/mainTask/list',2);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'数据库透视','数据库透视','/transfer/databaseInfo',3);
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'任务列表','任务列表','/transfer/task/list',4);
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'线程列表','线程列表','/transfer/thread/list',5);
 
 DROP TABLE IF EXISTS `datasource`;
 create table datasource(
@@ -35,12 +37,13 @@ create table maintask(
     name varchar(225),
     fromSource  int(11),
     toSource int(11)
-);
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 drop table if exists task;
 create table task(
   id int(11) primary key auto_increment,
   mainTaskId int(11),
+  name varchar(255),
   recordCount int(11),
   successCount int(11),
   failCount int(11),
@@ -48,5 +51,23 @@ create table task(
   stopTime datetime,
   recordModifyTimeBegin datetime,
   recordModifyTimeEnd datetime,
-  status int
-);
+  status int,
+  runCount int
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+drop table if exists taskthread;
+create table taskthread(
+  id int(11) primary key auto_increment,
+  taskId int(11),
+  name varchar(128),
+  tableName varchar(64),
+  startRecordId varchar(128),
+  stopRecordId varchar(128),
+  recordCount int(11),
+  successCount int(11),
+  failCount int(11),
+  startTime datetime,
+  stopTime datetime,
+  status int,
+  runCount int
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
