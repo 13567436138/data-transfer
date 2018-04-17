@@ -10,6 +10,7 @@ import com.youben.entity.Task;
 import com.youben.service.DatasourceService;
 import com.youben.service.MainTaskService;
 import com.youben.service.TaskService;
+import com.youben.service.TaskThreadService;
 import com.youben.task.RestartTaskThread;
 import com.youben.task.StartTaskThread;
 import com.youben.utils.StringUtils;
@@ -40,6 +41,8 @@ public class TaskController {
     private MainTaskService mainTaskService;
     @Autowired
     private DatasourceService datasourceService;
+    @Autowired
+    private TaskThreadService taskThreadService;
 
     @RequestMapping("/list")
     public String list(){
@@ -121,7 +124,7 @@ public class TaskController {
             return jsonResult;
         }
         taskService.updateStatusById(t.getId(),DataTransferConst.TASK_STATUS_RUN);
-        new StartTaskThread(t.getId()).start();
+        new StartTaskThread(t.getId(),datasourceService,mainTaskService,taskService,taskThreadService).start();
         jsonResult.setResult("ok");
         return jsonResult;
     }
