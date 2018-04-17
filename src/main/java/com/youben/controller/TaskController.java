@@ -50,6 +50,7 @@ public class TaskController {
     public PaginateResult<Task> listData(Task task, Pagination pagination, HttpServletRequest request){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
+
             if(!StringUtils.isEmpty(task.getStartTimeStr())) {
                 task.setStartTime(sdf.parse(task.getStartTimeStr()));
             }
