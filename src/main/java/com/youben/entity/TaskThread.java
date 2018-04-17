@@ -21,7 +21,7 @@ public class TaskThread extends GenericEntity {
     private int failCount;
     private Date startTime;
     private Date stopTime;
-    private int status;
+    private int status;  //1新建，2运行中，3成功，4失败，5重新运行中，6重新运行失败，7重新运行成功
     private int runCount;
 
     private String mainTaskName;
