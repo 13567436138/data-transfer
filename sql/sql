@@ -36,3 +36,17 @@ create table maintask(
     fromSource  int(11),
     toSource int(11)
 );
+
+drop table if exists task;
+create table task(
+  id int(11) primary key auto_increment,
+  mainTaskId int(11),
+  recordCount int(11),
+  successCount int(11),
+  failCount int(11),
+  startTime datetime,
+  stopTime datetime,
+  recordModifyTimeBegin datetime,
+  recordModifyTimeEnd datetime,
+  status int
+);
