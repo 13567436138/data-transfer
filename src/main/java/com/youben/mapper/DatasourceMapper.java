@@ -4,6 +4,8 @@ import com.youben.anno.MyBatisDao;
 import com.youben.base.GenericMapper;
 import com.youben.entity.Datasource;
 
+import java.util.List;
+
 /**
  * Description:
  * User: hxp
@@ -12,4 +14,5 @@ import com.youben.entity.Datasource;
  */
 @MyBatisDao
 public interface DatasourceMapper extends GenericMapper<Datasource> {
+    List<Datasource> queryByType(int type);
 }

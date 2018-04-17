@@ -9,6 +9,8 @@ import com.youben.service.DatasourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 /**
  * Description:
@@ -24,5 +26,10 @@ public class DatasourceServiceImpl extends GenericServiceImpl<Datasource> implem
     public DatasourceServiceImpl( DatasourceMapper datasourceMapper) {
         super(datasourceMapper);
         this.datasourceMapper=datasourceMapper;
+    }
+
+    @Override
+    public List<Datasource> queryByType(int type) {
+        return datasourceMapper.queryByType(type);
     }
 }

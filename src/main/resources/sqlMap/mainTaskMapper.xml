@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.youben.mapper.MainTaskMapper">
+    <resultMap id="mainTaskMap" type="MainTask">
+        <result column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="fromSource" property="fromSource"/>
+        <result column="toSource" property="toSource"/>
+        <result column="fromName" property="fromName"/>
+        <result column="toName" property="toName"/>
+    </resultMap>
 
+    <select id="findList" parameterType="MainTask" resultMap="mainTaskMap">
+        select
+        a.*,
+        concat('jdbc:mysql://',f.ip,':',f.port,'/',f.databaseName) fromName,
+        concat('jdbc:mysql://',t.ip,':',t.port,'/',t.databaseName) toName
+        from maintask a join datasource f on a.fromSource=f.id
+        join datasource t on a.toSource=t.id
+
+        <where>
+            1=1
+            <if test="name!=null and name!=''">
+                and a.name like '%${name}%'
+            </if>
+        </where>
+
+    </select>
+
+    <insert id="insert" parameterType="MainTask">
+        insert into maintask(
+          name,
+          fromSource,
+          toSource
+        )values(
+          #{name},
+          #{fromSource},
+          #{toSource}
+        )
+
+    </insert>
 </mapper>
 

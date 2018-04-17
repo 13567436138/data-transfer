@@ -9,7 +9,7 @@
    <script type="text/javascript"  charset="UTF-8">
    var searchUrl = "${contextPath}/transfer/mainTask/list/data";
    var updateUrl = "${contextPath}/departments/update.do";
-   var insertUrl = "${contextPath}/departments/insert.do";
+   var insertUrl = "${contextPath}/transfer/mainTask/add";
    var deleteUrl = "${contextPath}/departments/delete.do";
 	$(function() {
 	    $('#dataList').datagrid({  
@@ -30,15 +30,12 @@
 	        url:searchUrl, 
 	        toolbar:'#tb',
 	        columns:[[   
-                   		{field:'id',title:'菜单编号',width:100,align:'center'},
-                   		{field:'menuName',title:'菜单名称',width:100,align:'center'},
-                   		{field:'parent',title:'父菜单',width:100,align:'center',formatter:function(cellvalue, options, rowObject){
-                   			return cellvalue.menuName;
-                   		}},
-                   		{field:'link',title:'连接',width:200,align:'center'},
-                   		{field:'menuDesc',title:'描述',width:300,align:'center'},
-                   		{field:'order',title:'序号',width:100,align:'center'},
-                   		{field:'icon',title:'图标',width:100,align:'center'}
+                   		{field:'id',title:'主任务编号',width:100,align:'center'},
+                   		{field:'name',title:'名称',width:400,align:'center'},
+                   		{field:'fromName',title:'来源',width:500,align:'center'},
+                   		{field:'toName',title:'目标',width:500,align:'center'},
+						{field:'fromSource',title:'',width:1,align:'center',hidden:true},
+						{field:'toSource',title:'',width:1,align:'center',hidden:true},
 	        ]],
 	        
 	         onBeforeLoad: function (params) {
@@ -58,7 +55,33 @@
 	        beforePageText: '第',//页数文本框前显示的汉字  
 	        afterPageText: '页    共 {pages} 页',  
 	        displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录'
-	    })
+	    });
+
+	    $.ajax({
+            type: "GET",
+            url: "${contextPath}/datasource/query/type",
+            data: {type:1},
+            dataType: "json",
+            success: function(datas){
+				for(var i=0;i<datas.length;i++){
+				    var data=datas[i];
+				    $("#fromSource").append("<option value='"+data.id+"'>"+data.name+"</option>")
+				}
+            }
+		});
+        $.ajax({
+            type: "GET",
+            url: "${contextPath}/datasource/query/type",
+            data: {type:2},
+            dataType: "json",
+            success: function(datas){
+                for(var i=0;i<datas.length;i++){
+                    var data=datas[i];
+                    $("#toSource").append("<option value='"+data.id+"'>"+data.name+"</option>")
+                }
+            }
+        });
+
 	});
 	</script>
   </head>
@@ -74,10 +97,8 @@
 		</div>
 		<div>
 			<form  id='searchForm' action="" method="post">
-				菜单名称:
-				<input type="text" id="menuName" name="menuName"/>
-				父菜单名称:
-				<input type="text" id="pmenuName" name="parent.menuName"/>
+				名称:
+				<input type="text" id="name" name="name"/>
 				<input type="button" onclick="loadList(1);" value="查询"/>
 			</form>
 		</div>
@@ -90,22 +111,24 @@
 			<form id='addForm' action="" method="post">
 				<table>
 						<tr>
-							<td>菜单名称:</td>
-							<td><input type="text" id="menuName" name="menuName" style="width:120px"/></td>
-							<td>菜单描述:</td>
-							<td><input type="text" id="menuDesc" name="menuDesc" style="width:120px"/></td>
+							<td>任务名称:</td>
+							<td><input type="text" id="name" name="name" style="width:420px"/></td>
 						</tr>
 						<tr>
-							<td>菜单连接:</td>
-							<td><input type="text" id="link" name="link" style="width:120px"/></td>
-							<td>菜单序号:</td>
-							<td><input type="text" id="order" name="order" style="width:120px"/></td>
+							<td>来源:</td>
+							<td>
+								<select id="fromSource" name="fromSource" style="width:420px">
+
+								</select>
+							</td>
 						</tr>
 						<tr>
-							<td>父菜单:</td>
-                            <td><input type="text" id="parent.id" name="parent.id" style="width:120px"/></td>
-							<td>菜单图标:</td>
-							<td><input type="text" id="icon" name="icon" style="width:120px"/></td>
+							<td>目标:</td>
+                            <td>
+								<select id="toSource" name="toSource" style="width:420px">
+
+								</select>
+							</td>
 						</tr>
 						
 				</table>

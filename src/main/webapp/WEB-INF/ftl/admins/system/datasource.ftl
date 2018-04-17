@@ -101,7 +101,7 @@
 
 <div style="visibility:hidden" >
     <div id="addwindow"  title="添加" style="width:600px;height:350px;padding:10px">
-        <form id='addForm' action="" method="post">
+        <form id='addForm' action="" method="get">
             <input type="hidden" id="id" name="id"/>
             <table>
                 <tr>

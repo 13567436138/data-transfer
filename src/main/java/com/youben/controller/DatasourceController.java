@@ -9,10 +9,12 @@ import com.youben.service.DatasourceService;
 import com.youben.utils.JdbcUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @RequestMapping("/datasource")
@@ -31,8 +33,15 @@ public class DatasourceController extends GenericController {
 
     @RequestMapping("/test")
     @ResponseBody
-    public String test(Datasource datasource){
-        return "{\"result\":"+JdbcUtil.testOk(datasource)+"}";
+    public JsonResult test(Datasource datasource,BindingResult bindingResult){
+        boolean success=JdbcUtil.testOk(datasource);
+        JsonResult result=new JsonResult();
+        if(success) {
+            result.setResult("ok");
+        }else{
+            result.setErrorMsg("连接失败");
+        }
+        return  result;
     }
 
     @RequestMapping("/delete")
@@ -46,7 +55,7 @@ public class DatasourceController extends GenericController {
 
     @RequestMapping("/add")
     @ResponseBody
-    public JsonResult add(Datasource datasource){
+    public JsonResult add(Datasource datasource,BindingResult bindingResult){
         datasourceService.insert(datasource);
         JsonResult jsonResult=new JsonResult();
         jsonResult.setResult("ok");
@@ -62,5 +71,11 @@ public class DatasourceController extends GenericController {
     @ResponseBody
     public PaginateResult<Datasource> listData(Datasource datasource, Pagination pagination, HttpServletRequest request){
         return datasourceService.findPage(pagination, datasource);
+    }
+
+    @RequestMapping("/query/type")
+    @ResponseBody
+    public List<Datasource> queryByType(int type){
+        return datasourceService.queryByType(type);
     }
 }

@@ -12,6 +12,24 @@ public class MainTask extends GenericEntity{
     private String name;
     private int fromSource;
     private int toSource;
+    private String fromName;
+    private String toName;
+
+    public String getFromName() {
+        return fromName;
+    }
+
+    public void setFromName(String fromName) {
+        this.fromName = fromName;
+    }
+
+    public String getToName() {
+        return toName;
+    }
+
+    public void setToName(String toName) {
+        this.toName = toName;
+    }
 
     public String getName() {
         return name;

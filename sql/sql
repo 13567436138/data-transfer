@@ -20,7 +20,7 @@ insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId fr
 DROP TABLE IF EXISTS `datasource`;
 create table datasource(
   id int(11) primary key auto_increment,
-  name varchar(25),
+  name varchar(128),
   type int ,
   ip varchar(25),
   port varchar(5),

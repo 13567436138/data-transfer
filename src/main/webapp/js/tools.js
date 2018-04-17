@@ -1,5 +1,5 @@
 var dataTree ;
-$(function(){
+/*$(function(){
     setCsrfToken("_csrf-form");
 });
 
@@ -13,7 +13,7 @@ function setCsrfToken(formId) {
             s.url += "csrfToken=" + csrfToken;
         }
     });
-}
+}*/
 $(function(){
 	
 	var path=document.getElementById("base").href;
@@ -447,11 +447,11 @@ var _insertHandler = function(url) {
 var _testHandler = function(url) {
     $('#addForm').form.url = url || testUrl; //表单提交路径
     submitForm("addForm", $('#addForm').form.url, function(data) {
+    	console.log(data)
         data = convertJson(data);
-        if (data.result) {
+        if (data.result=='ok') {
             showBox("提示信息", "测试成功", 'info');
         } else {
-            data.errorMsg="测试失败";
             showError(data);
         }
     });

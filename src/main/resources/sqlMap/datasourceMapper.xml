@@ -70,5 +70,22 @@
             </if>
         </where>
     </select>
+
+    <select id="queryByType" parameterType="int" resultMap="datasourceMap">
+        select
+        id,
+        name,
+        type,
+        ip,
+        port,
+        databaseName,
+        username,
+        password
+
+        from datasource d
+        <where>
+            d.type=#{type}
+        </where>
+    </select>
 </mapper>
 
