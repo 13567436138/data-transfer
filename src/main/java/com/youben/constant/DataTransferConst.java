@@ -18,4 +18,9 @@ public class DataTransferConst {
     public static final int TASK_STATUS_FAIL=6;
     public static final int TASK_STATUS_RERUN_FAIL=7;
 
+    public static final int COUNT_PER_THREAD=100000;
+
+    public static final int DO_JOB_TYPE_NEW=1;
+    public static final int DO_JOB_TYPE_REDO=2;
+
 }
