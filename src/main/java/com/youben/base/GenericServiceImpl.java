@@ -81,4 +81,8 @@ public abstract class GenericServiceImpl<T extends GenericEntity> implements Gen
     public T getById(String refrenceId){
         return dao.selectByPrimaryKey(refrenceId);
     }
+
+    public List<T> findAll(){
+        return dao.selectAll();
+    }
 }

@@ -43,5 +43,9 @@
     <select id="selectByPrimaryKey" parameterType="String" resultMap="mainTaskMap">
         select * from maintask where id=#{id}
     </select>
+
+    <select id="selectAll"  resultMap="mainTaskMap">
+        select * from maintask;
+    </select>
 </mapper>
 

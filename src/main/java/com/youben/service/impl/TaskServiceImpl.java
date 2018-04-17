@@ -164,4 +164,9 @@ public class TaskServiceImpl extends GenericServiceImpl<Task> implements TaskSer
     public void updateStatusById(int id, int status) {
         taskMapper.updateStatusById(id,status);
     }
+
+    @Override
+    public List<Task> findByMainTaskId(int mainTaskId) {
+        return taskMapper.findByMainTaskId(mainTaskId);
+    }
 }

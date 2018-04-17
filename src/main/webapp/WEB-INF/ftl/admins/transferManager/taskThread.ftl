@@ -7,7 +7,7 @@
    <base id="base" href="${contextPath}">  
    <#include "/common/common.ftl">
    <script type="text/javascript"  charset="UTF-8">
-   var searchUrl = "${contextPath}/menu/list/data";
+   var searchUrl = "${contextPath}/transfer/thread/list/data";
    var updateUrl = "${contextPath}/departments/update.do";
    var insertUrl = "${contextPath}/departments/insert.do";
    var deleteUrl = "${contextPath}/departments/delete.do";
@@ -30,15 +30,20 @@
 	        url:searchUrl, 
 	        toolbar:'#tb',
 	        columns:[[   
-                   		{field:'id',title:'菜单编号',width:100,align:'center'},
-                   		{field:'menuName',title:'菜单名称',width:100,align:'center'},
-                   		{field:'parent',title:'父菜单',width:100,align:'center',formatter:function(cellvalue, options, rowObject){
-                   			return cellvalue.menuName;
-                   		}},
-                   		{field:'link',title:'连接',width:200,align:'center'},
-                   		{field:'menuDesc',title:'描述',width:300,align:'center'},
-                   		{field:'order',title:'序号',width:100,align:'center'},
-                   		{field:'icon',title:'图标',width:100,align:'center'}
+                   		{field:'id',title:'编号',width:100,align:'center'},
+                   		{field:'mainTaskName',title:'主任务名称',width:400,align:'center'},
+                   		{field:'taskName',title:'任务名称',width:400,align:'center'},
+                   		{field:'name',title:'名称',width:200,align:'center'},
+                   		{field:'tableName',title:'表名',width:100,align:'center'},
+                   		{field:'startRecordId',title:'开始记录id',width:100,align:'center'},
+						{field:'stopRecordId',title:'结束记录id',width:100,align:'center'},
+						{field:'recordCount',title:'记录总数',width:100,align:'center'},
+						{field:'successCount',title:'成功记录数量',width:100,align:'center'},
+						{field:'failCount',title:'失败记录数量',width:100,align:'center'},
+						{field:'status',title:'状态',width:100,align:'center'},
+						{field:'startTime',title:'开始时间',width:100,align:'center'},
+						{field:'stopTime',title:'结束时间',width:100,align:'center'},
+						{field:'runCount',title:'运行次数',width:100,align:'center'}
 	        ]],
 	        
 	         onBeforeLoad: function (params) {
@@ -59,6 +64,50 @@
 	        afterPageText: '页    共 {pages} 页',  
 	        displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录'
 	    })
+
+        $.ajax({
+            type: "GET",
+            url: "${contextPath}/transfer/mainTask/all",
+            data: {},
+            dataType: "json",
+            success: function(datas){
+                for(var i=0;i<datas.length;i++){
+                    var data=datas[i];
+                    $("#mainTaskId").append("<option value='"+data.id+"'>"+data.name+"</option>")
+                }
+
+                $.ajax({
+                    type: "GET",
+                    url: "${contextPath}/transfer/task/all",
+                    data: {mainTaskId:$("#mainTaskId").val()},
+                    dataType: "json",
+                    success: function(datas){
+                        for(var i=0;i<datas.length;i++){
+                            var data=datas[i];
+                            $("#taskId").append("<option value='"+data.id+"'>"+data.name+"</option>")
+                        }
+
+
+                    }
+                });
+            }
+        });
+
+        $('#mainTaskId').change(function(){
+            $.ajax({
+                type: "GET",
+                url: "${contextPath}/transfer/task/all",
+                data: {mainTaskId:$("#mainTaskId").val()},
+                dataType: "json",
+                success: function(datas){
+                    $("#taskId").empty();
+                    for(var i=0;i<datas.length;i++){
+                        var data=datas[i];
+                        $("#taskId").append("<option value='"+data.id+"'>"+data.name+"</option>")
+                    }
+                }
+            });
+        })
 	});
 	</script>
   </head>
@@ -68,16 +117,30 @@
 		<div id='dataList'>
 			<div id="tb" style="padding:5px;height:auto">
 		<div style="margin-bottom:5px">
-			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="showAddwindow({title:'新增'})">新增</a>|
-			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="showUpdate({title:'修改',readonlyFields:['id']});">修改</a>|
-			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delRowData({id:'id'});">删除</a>
+
 		</div>
 		<div>
 			<form  id='searchForm' action="" method="post">
-				菜单名称:
-				<input type="text" id="menuName" name="menuName"/>
-				父菜单名称:
-				<input type="text" id="pmenuName" name="parent.menuName"/>
+				主任务名称:
+				<select id="mainTaskId" name="mainTaskId">
+
+				</select>
+				任务名称:
+				<select id="taskId" name="taskId" style="width: 400px;">
+
+				</select></br>
+                名称:
+                <input type="text" id="name" name="name"/>
+                开始时间:
+                <input id="startTimeStr" name="startTimeStr" type="text" class="easyui-datebox" required="required" style="width: 200px;">
+                结束时间:
+                <input id="stopTimeStr" name="stopTimeStr" type="text" class="easyui-datebox" required="required" style="width: 200px;">
+                状态:
+                <select name="status">
+					<option value="0">全部</option>
+				</select>
+                表名:
+                <input type="text" id="tableName" name="tableName"/>
 				<input type="button" onclick="loadList(1);" value="查询"/>
 			</form>
 		</div>
@@ -85,33 +148,6 @@
 		</div>
 	</div>
 	
-	<div style="visibility:hidden" >
-		<div id="addwindow"  title="添加" style="width:600px;height:350px;padding:10px">
-			<form id='addForm' action="" method="post">
-				<table>
-						<tr>
-							<td>菜单名称:</td>
-							<td><input type="text" id="menuName" name="menuName" style="width:120px"/></td>
-							<td>菜单描述:</td>
-							<td><input type="text" id="menuDesc" name="menuDesc" style="width:120px"/></td>
-						</tr>
-						<tr>
-							<td>菜单连接:</td>
-							<td><input type="text" id="link" name="link" style="width:120px"/></td>
-							<td>菜单序号:</td>
-							<td><input type="text" id="order" name="order" style="width:120px"/></td>
-						</tr>
-						<tr>
-							<td>父菜单:</td>
-                            <td><input type="text" id="parent.id" name="parent.id" style="width:120px"/></td>
-							<td>菜单图标:</td>
-							<td><input type="text" id="icon" name="icon" style="width:120px"/></td>
-						</tr>
-						
-				</table>
-			</form>
-		</div>
-	</div>
-	
+
   </body>
 </html>

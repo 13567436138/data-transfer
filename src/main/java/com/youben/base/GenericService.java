@@ -15,5 +15,6 @@ public interface GenericService <T extends GenericEntity>{
 	PaginateResult<T> findPage(Pagination page, T entity);
 	void update(T entity);
 	T getById(String refrenceId);
+	List<T> findAll();
 	
 }

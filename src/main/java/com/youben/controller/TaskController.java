@@ -23,6 +23,7 @@ import javax.xml.crypto.Data;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Description:
@@ -139,5 +140,11 @@ public class TaskController {
         jsonResult.setErrorMsg("任务不是处于失败状态");
         return jsonResult;
 
+    }
+
+    @ResponseBody
+    @RequestMapping("/all")
+    public List<Task> all(int mainTaskId){
+        return taskService.findByMainTaskId(mainTaskId);
     }
 }

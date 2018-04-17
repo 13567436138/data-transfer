@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Description:
@@ -45,6 +46,12 @@ public class MainTaskController {
         JsonResult jsonResult=new JsonResult();
         jsonResult.setResult("ok");
         return jsonResult;
+    }
+
+    @RequestMapping("/all")
+    @ResponseBody
+    public List<MainTask> all(){
+        return mainTaskService.findAll();
     }
 
 }

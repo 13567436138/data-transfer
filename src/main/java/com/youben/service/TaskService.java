@@ -3,6 +3,8 @@ package com.youben.service;
 import com.youben.base.GenericService;
 import com.youben.entity.Task;
 
+import java.util.List;
+
 /**
  * Description:
  * User: hxp
@@ -13,4 +15,5 @@ public interface TaskService extends GenericService<Task> {
     boolean checkIfTaskExistsByMainTaskId(int mainTaskId);
     int countRecord(int mainTaskId,String recordStartTime,String recordEndTime);
     void updateStatusById(int id,int status);
+    List<Task> findByMainTaskId(int mainTaskId);
 }

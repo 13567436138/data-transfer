@@ -5,6 +5,8 @@ import com.youben.base.GenericMapper;
 import com.youben.entity.Task;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * Description:
  * User: hxp
@@ -15,4 +17,5 @@ import org.apache.ibatis.annotations.Param;
 public interface TaskMapper extends GenericMapper<Task> {
     int countByMainTaskId(int mainTaskId);
     void updateStatusById(@Param( "id")int id,@Param("status") int status);
+    List<Task> findByMainTaskId(int mainTaskId);
 }
