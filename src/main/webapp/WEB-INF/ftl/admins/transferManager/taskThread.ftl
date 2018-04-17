@@ -138,13 +138,13 @@
                 状态:
                 <select name="status">
 					<option value="0">全部</option>
-					<option value="1></option>
-                    <option value="2"></option>
-                    <option value="3"></option>
-                    <option value="4"></option>
-                    <option value="5"></option>
-                    <option value="6"></option>
-                    <option value="7"></option>
+					<option value="1>新建</option>
+                    <option value="2">运行中</option>
+                    <option value="3">成功</option>
+                    <option value="4">失败</option>
+                    <option value="5">重新运行中</option>
+                    <option value="6">重新运行失败</option>
+                    <option value="7">重新运行成功</option>
 				</select>
                 表名:
                 <input type="text" id="tableName" name="tableName"/>

@@ -1,7 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.youben.mapper.TaskThreadMapper">
+    <resultMap id="taskThreadMap" type="TaskThread">
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="tableName" property="tableName" />
+        <result column="startRecordId" property="startRecordId" />
+        <result column="stopRecordId" property="stopRecordId" />
+        <result column="recordCount" property="recordCount" />
+        <result column="successCount" property="successCount" />
+        <result column="failCount" property="failCount" />
+        <result column="startTime" property="startTime" />
+        <result column="stopTime" property="stopTime" />
+        <result column="status" property="status" />
+        <result column="taskId" property="taskId" />
+        <result column="runCount" property="runCount" />
+        <result column="mainTaskName" property="mainTaskName" />
+        <result column="taskName" property="taskName" />
+    </resultMap>
+    <select id="findList" parameterType="TaskThread" resultMap="taskThreadMap">
+        select
+        a.*,
+        b.name taskName,
+        c.name mainTaskName
+        from taskthread a join task b on a.taskId=b.id
+        join maintask c on b.mainTaskId=c.id
+        <where>
+            1=1
+            and c.id=#{mainTaskId}
+            and b.id=#{taskId}
+            <if test="name!=null and name!=''">
+                and a.name like '%${name}%'
+            </if>
+            <if test="startTime!=null">
+                and a.startTime &gt;#{startTime}
+            </if>
+            <if test="stopTime!=null" >
+                and a.stopTime &lt;=#{stopTime}
+            </if>
+            <if test="status!=0">
+                and a.status=#{status}
+            </if>
+            <if test="tableName!=null and tableName!=''" >
+                and a.tableName=#{tableName}
+            </if>
+        </where>
 
-    
+    </select>
 </mapper>
 
