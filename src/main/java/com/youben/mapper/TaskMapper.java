@@ -3,6 +3,7 @@ package com.youben.mapper;
 import com.youben.anno.MyBatisDao;
 import com.youben.base.GenericMapper;
 import com.youben.entity.Task;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * Description:
@@ -13,4 +14,5 @@ import com.youben.entity.Task;
 @MyBatisDao
 public interface TaskMapper extends GenericMapper<Task> {
     int countByMainTaskId(int mainTaskId);
+    void updateStatusById(@Param( "id")int id,@Param("status") int status);
 }

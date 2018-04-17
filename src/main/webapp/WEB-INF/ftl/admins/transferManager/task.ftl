@@ -35,11 +35,59 @@
                    		{field:'recordCount',title:'记录数',width:150,align:'center'},
                    		{field:'successCount',title:'成功记录数',width:150,align:'center'},
 						{field:'failCount',title:'失败记录数',width:150,align:'center'},
-						{field:'startTime',title:'开始时间',width:150,align:'center'},
-                		{field:'stopTime',title:'结束时间',width:150,align:'center'},
-                		{field:'recordModifyTimeBegin',title:'记录开始时间',width:150,align:'center'},
-                		{field:'recordModifyTimeEnd',title:'记录结束时间',width:150,align:'center'},
-                		{field:'status',title:'状态',width:150,align:'center'}
+						{field:'startTime',title:'开始时间',width:150,align:'center',formatter:function(value,row,index) {
+                                if (value > 0) {
+                                	var unixTimestamp = new Date(value);
+                                	return unixTimestamp.getFullYear() + "-" + (unixTimestamp.getMonth() + 1) + "-" + unixTimestamp.getDate()+" "+unixTimestamp.getHours()+":"+unixTimestamp.getMinutes()+":"+unixTimestamp.getSeconds();
+                            	}else{
+                                    return "";
+								}
+                            }
+                        },
+                		{field:'stopTime',title:'结束时间',width:150,align:'center',formatter:function(value,row,index) {
+                                if (value > 0) {
+                                    var unixTimestamp = new Date(value);
+                                    return unixTimestamp.getFullYear() + "-" + (unixTimestamp.getMonth() + 1) + "-" + unixTimestamp.getDate() + " " + unixTimestamp.getHours() + ":" + unixTimestamp.getMinutes() + ":" + unixTimestamp.getSeconds();
+                                }else{
+                                    return "";
+                                }
+                            }
+                        },
+                		{field:'recordModifyTimeBegin',title:'记录开始时间',width:150,align:'center',formatter:function(value,row,index){
+                                if (value > 0) {
+                                    var unixTimestamp = new Date(value);
+                                    return unixTimestamp.getFullYear() + "-" + (unixTimestamp.getMonth() + 1) + "-" + unixTimestamp.getDate();
+                                }else{
+                                    return "";
+								}
+                            }
+                        },
+                		{field:'recordModifyTimeEnd',title:'记录结束时间',width:150,align:'center',formatter:function(value,row,index){
+                                if (value > 0) {
+                                    var unixTimestamp = new Date(value);
+                                    return unixTimestamp.getFullYear() + "-" + (unixTimestamp.getMonth() + 1) + "-" + unixTimestamp.getDate();
+                                }else{
+                                    return "";
+								}
+                            }
+                        },
+                		{field:'status',title:'状态',width:150,align:'center',formatter:function(cellvalue, options, rowObject){
+                                if(cellvalue==1){
+                                    return "新建";
+								}else if(cellvalue==2){
+                                    return "启动运行中";
+								}else if(cellvalue==3){
+                                    return "成功";
+								}else if(cellvalue==4){
+                                    return "重新启动运行中";
+								}else if(cellvalue==5){
+                                    return "重新启动成功";
+								}else if(cellvalue==6){
+                                    return "失败";
+								}else if(cellvalue==7){
+                                    return "重新启动失败";
+								}
+                		}}
 	        ]],
 	        
 	         onBeforeLoad: function (params) {
@@ -87,6 +135,55 @@
         });
 
 	});
+	
+	function enableTask() {
+        var rows = $('#dataList').datagrid("getSelections");
+        if (rows.length != 1) {
+            $.messager.alert('提示框', '请选择一个主任务', 'warning');
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "${contextPath}/transfer/task/enable",
+            data: {id:rows[0].id},
+            dataType: "json",
+            success: function(data){
+                $('#dataList').datagrid('clearSelections');//清空选择
+                var pageNumber = $('#dataList').datagrid('getPager').data("pagination").options.pageNumber;
+                loadList(pageNumber);
+                if (data.result=='ok') {
+                    showBox("提示信息", "成功", 'info');
+                } else {
+                    showError(data);
+                }
+            }
+        });
+    }
+    
+    function reenableTask() {
+        var rows = $('#dataList').datagrid("getSelections");
+        if (rows.length != 1) {
+            $.messager.alert('提示框', '请选择一个主任务', 'warning');
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "${contextPath}/transfer/task/reenable",
+            data: {id:rows[0].id},
+            dataType: "json",
+            success: function(data){
+                $('#dataList').datagrid('clearSelections');//清空选择'
+                var pageNumber = $('#dataList').datagrid('getPager').data("pagination").options.pageNumber;
+                loadList(pageNumber);
+                if (data.result=='ok') {
+                    showBox("提示信息", "成功", 'info');
+                } else {
+                    showError(data);
+                }
+            }
+        });
+
+    }
 	</script>
   </head>
   
@@ -95,8 +192,8 @@
 		<div id='dataList'>
 			<div id="tb" style="padding:5px;height:auto">
 		<div style="margin-bottom:5px">
-			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="enableTask({title:'启动'})">启动任务</a>|
-			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="reenableTask({title:'重新启动'});">重新启动任务</a>|
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="enableTask()">启动任务</a>|
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="reenableTask();">重新启动任务</a>|
 		</div>
 		<div>
 			<form  id='searchForm' action="" method="post">

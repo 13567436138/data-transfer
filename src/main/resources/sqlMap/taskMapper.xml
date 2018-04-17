@@ -79,5 +79,14 @@
         </where>
 
     </select>
+
+    <select id="selectByPrimaryKey" parameterType="String" resultMap="taskMap">
+        select * from task where id=#{id}
+    </select>
+
+    <update id="updateStatusById" parameterType="map" >
+        update task set status=#{status} where id=#{id}
+
+    </update>
 </mapper>
 

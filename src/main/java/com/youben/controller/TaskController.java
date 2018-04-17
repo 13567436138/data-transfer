@@ -10,6 +10,8 @@ import com.youben.entity.Task;
 import com.youben.service.DatasourceService;
 import com.youben.service.MainTaskService;
 import com.youben.service.TaskService;
+import com.youben.task.RestartTaskThread;
+import com.youben.task.StartTaskThread;
 import com.youben.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -103,6 +106,37 @@ public class TaskController {
     @ResponseBody
     public int countRecord(int mainTaskId,String recordStartTime,String recordEndTime){
         return taskService.countRecord(mainTaskId,recordStartTime,recordEndTime);
+
+    }
+
+    @RequestMapping("/enable")
+    @ResponseBody
+    public JsonResult enable(Task t){
+        Task task=  taskService.getById(String.valueOf(t.getId()));
+        JsonResult jsonResult=new JsonResult();
+        if(task.getStatus()!=DataTransferConst.TASK_STATUS_NEW){
+            jsonResult.setErrorMsg("任务不是处于新建状态");
+            return jsonResult;
+        }
+        taskService.updateStatusById(t.getId(),DataTransferConst.TASK_STATUS_RUN);
+        new StartTaskThread(t.getId()).start();
+        jsonResult.setResult("ok");
+        return jsonResult;
+    }
+
+    @RequestMapping("/reenable")
+    @ResponseBody
+    public JsonResult reenable(Task t){
+        Task task=  taskService.getById(String.valueOf(t.getId()));
+        JsonResult jsonResult=new JsonResult();
+        if(task.getStatus()==DataTransferConst.TASK_STATUS_FAIL||task.getStatus()== DataTransferConst.TASK_STATUS_RERUN_FAIL){
+            taskService.updateStatusById(t.getId(),DataTransferConst.TASK_STATUS_RERUN);
+            new RestartTaskThread(t.getId()).start();
+            jsonResult.setResult("ok");
+            return jsonResult;
+        }
+        jsonResult.setErrorMsg("任务不是处于失败状态");
+        return jsonResult;
 
     }
 }

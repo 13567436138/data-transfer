@@ -159,4 +159,9 @@ public class TaskServiceImpl extends GenericServiceImpl<Task> implements TaskSer
         }
         return totalCount;
     }
+
+    @Override
+    public void updateStatusById(int id, int status) {
+        taskMapper.updateStatusById(id,status);
+    }
 }
