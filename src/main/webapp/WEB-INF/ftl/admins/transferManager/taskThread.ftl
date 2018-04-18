@@ -43,7 +43,9 @@
 						{field:'status',title:'状态',width:100,align:'center'},
 						{field:'startTime',title:'开始时间',width:100,align:'center'},
 						{field:'stopTime',title:'结束时间',width:100,align:'center'},
-						{field:'runCount',title:'运行次数',width:100,align:'center'}
+						{field:'runCount',title:'运行次数',width:100,align:'center'},
+						{field:'recordStartTime',title:'记录开始时间',width:100,align:'center'},
+						{field:'recordEndTime',title:'技术结束时间',width:100,align:'center'}
 	        ]],
 	        
 	         onBeforeLoad: function (params) {

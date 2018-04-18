@@ -23,12 +23,30 @@ public class TaskThread extends GenericEntity {
     private Date stopTime;
     private int status;  //1新建，2运行中，3成功，4失败，5重新运行中，6重新运行失败，7重新运行成功
     private int runCount;
+    private Date recordStartTime;
+    private Date recordEndTime;
 
     private String mainTaskName;
     private String taskName;
     private int mainTaskId;
     private String startTimeStr;
     private String stopTimeStr;
+
+    public Date getRecordStartTime() {
+        return recordStartTime;
+    }
+
+    public void setRecordStartTime(Date recordStartTime) {
+        this.recordStartTime = recordStartTime;
+    }
+
+    public Date getRecordEndTime() {
+        return recordEndTime;
+    }
+
+    public void setRecordEndTime(Date recordEndTime) {
+        this.recordEndTime = recordEndTime;
+    }
 
     public String getStartTimeStr() {
         return startTimeStr;

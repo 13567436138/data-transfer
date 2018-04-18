@@ -18,9 +18,19 @@ public class DataTransferConst {
     public static final int TASK_STATUS_FAIL=6;
     public static final int TASK_STATUS_RERUN_FAIL=7;
 
-    public static final int COUNT_PER_THREAD=100000;
+    public static final int COUNT_PER_THREAD=1000000;
 
     public static final int DO_JOB_TYPE_NEW=1;
     public static final int DO_JOB_TYPE_REDO=2;
+
+    public static final int TASKTHREAD_STATUS_NEW=1; //1新建，2运行中，3成功，4失败，5重新运行中，6重新运行失败，7重新运行成功
+    public static final int TASKTHREAD_STATUS_RUN=2;
+    public static final int TASKTHREAD_STATUS_SUCCESS=3;
+    public static final int TASKTHREAD_STATUS_FAIL=4;
+    public static final int TASKTHREAD_STATUS_RERUN=5;
+    public static final int TASKTHREAD_STATUS_RERUN_FAIL=6;
+    public static final int TASKTHREAD_STATUS_RERUN_SUCCESS=6;
+
+
 
 }

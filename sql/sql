@@ -69,5 +69,7 @@ create table taskthread(
   startTime datetime,
   stopTime datetime,
   status int,
-  runCount int
+  runCount int,
+  recordEndTime datetime,
+  recordStartTime datetime
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;

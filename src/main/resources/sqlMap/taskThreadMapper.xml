@@ -17,6 +17,8 @@
         <result column="runCount" property="runCount" />
         <result column="mainTaskName" property="mainTaskName" />
         <result column="taskName" property="taskName" />
+        <result column="recordStartTime" property="recordStartTime"/>
+        <result column="recordEndTime" property="recordEndTime"/>
     </resultMap>
     <select id="findList" parameterType="TaskThread" resultMap="taskThreadMap">
         select
@@ -47,5 +49,42 @@
         </where>
 
     </select>
+
+    <insert id="insert" parameterType="TaskThread" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into taskthread(
+            name,
+            taskId,
+            tableName,
+            startRecordId,
+            stopRecordId,
+            recordCount,
+            successCount,
+            failCount,
+            startTime,
+            stopTime,
+            status,
+            runCount,
+            recordEndTime,
+            recordStartTime
+        )values(
+            #{name},
+            #{taskId},
+            #{tableName},
+            #{startRecordId},
+            #{stopRecordId},
+            #{recordCount},
+            #{successCount},
+            #{failCount},
+            #{startTime},
+            #{stopTime},
+            #{status},
+            #{runCount},
+            #{recordEndTime},
+            #{recordStartTime}
+        )
+    </insert>
 </mapper>
 

@@ -82,6 +82,10 @@ public class TaskController {
         task.setFailCount(0);
         task.setName(name);
 
+        if(StringUtils.isEmpty(recordStartTime)){
+            recordStartTime="2016-01-01";
+        }
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date start = null;
         Date end = null;
@@ -110,6 +114,9 @@ public class TaskController {
     @RequestMapping("/countRecord")
     @ResponseBody
     public int countRecord(int mainTaskId,String recordStartTime,String recordEndTime){
+        if(StringUtils.isEmpty(recordStartTime)){
+            recordStartTime="2016-01-01";
+        }
         return taskService.countRecord(mainTaskId,recordStartTime,recordEndTime);
 
     }
