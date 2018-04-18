@@ -102,103 +102,9 @@ public class StartTaskThread extends Thread {
                                     taskThread.setTableName(tableName);
                                     taskThread.setRecordStartTime(task.getRecordModifyTimeBegin());
                                     taskThread.setRecordEndTime(task.getRecordModifyTimeEnd());
-                                    if(tableName.equals("sequences")) {
-                                        rs4   = dbmd.getPrimaryKeys(null, null, tableName);
-                                        List<String> pkList=new ArrayList<>();
-                                        while (rs4.next())  {
-                                            pkList.add(rs4.getString("COLUMN_NAME"));
-                                        }
-                                        String startPk="";
-                                        String stopPk="";
-                                        boolean shouldContinue=false;
-                                        for(int j=0;j<pkList.size();j++) {
-                                            try{
-                                                ps2 = conn.prepareStatement("select  "+pkList.get(j)+"  from " + tableName + "  where last_modified>? and last_modified<=? order by last_modified  limit 1");
-                                                ps2.setDate(1, new java.sql.Date(task.getRecordModifyTimeBegin().getTime()));
-                                                ps2.setDate(2, new java.sql.Date(task.getRecordModifyTimeEnd().getTime()));
-                                                rs2 = ps2.executeQuery();
-                                                if (rs2.next()) {
-                                                    startPk+=rs2.getLong(1);
-                                                }else{
-                                                    shouldContinue=true;
-                                                    break;
-                                                }
-                                                ps3 = conn.prepareStatement("select "+pkList.get(j)+"  from " + tableName + "  where last_modified>? and last_modified<=? order by last_modified desc limit 1");
-                                                ps3.setDate(1, new java.sql.Date(task.getRecordModifyTimeBegin().getTime()));
-                                                ps3.setDate(2, new java.sql.Date(task.getRecordModifyTimeEnd().getTime()));
-                                                rs3 = ps3.executeQuery();
-                                                if (rs3.next()) {
-                                                    stopPk+=rs3.getLong(1);
-                                                }
-                                            }finally {
-                                                if(ps2!=null) {
-                                                    ps2.close();
-                                                }
-                                                if(rs2!=null) {
-                                                    rs2.close();
-                                                }
-                                                if(ps3!=null) {
-                                                    ps3.close();
-                                                }if(rs3!=null) {
-                                                    rs3.close();
-                                                }
-                                            }
-                                        }
-                                        if(shouldContinue){
-                                            continue;
-                                        }
-                                        taskThread.setStartRecordId(startPk);
-                                        taskThread.setStopRecordId(stopPk);
-                                    }else{
-                                        rs4   = dbmd.getPrimaryKeys(null, null, tableName);
-                                        List<String> pkList=new ArrayList<>();
-                                        while (rs.next())  {
-                                            pkList.add(rs4.getString("COLUMN_NAME"));
-                                        }
-                                        String startPk="";
-                                        String stopPk="";
-                                        boolean shouldContinue=false;
-                                        for(int j=0;j<pkList.size();j++) {
-                                            try{
-                                                ps2 = conn.prepareStatement("select  "+pkList.get(j)+"  from " + tableName + "  where gmt_modified>? and gmt_modified<=? order by gmt_modified  limit 1");
-                                                ps2.setDate(1, new java.sql.Date(task.getRecordModifyTimeBegin().getTime()));
-                                                ps2.setDate(2, new java.sql.Date(task.getRecordModifyTimeEnd().getTime()));
-                                                rs2 = ps2.executeQuery();
-                                                if (rs2.next()) {
-                                                    startPk+=rs2.getLong(1);
-                                                }else{
-                                                    shouldContinue=true;
-                                                    break;
-                                                }
-                                                ps3 = conn.prepareStatement("select "+pkList.get(j)+"  from " + tableName + "  where gmt_modified>? and gmt_modified<=? order by gmt_modified desc limit 1");
-                                                ps3.setDate(1, new java.sql.Date(task.getRecordModifyTimeBegin().getTime()));
-                                                ps3.setDate(2, new java.sql.Date(task.getRecordModifyTimeEnd().getTime()));
-                                                rs3 = ps3.executeQuery();
-                                                if (rs3.next()) {
-                                                    stopPk+=rs3.getLong(1);
-                                                }
-                                            }finally {
-                                                if(ps2!=null) {
-                                                    ps2.close();
-                                                }
-                                                if(rs2!=null) {
-                                                    rs2.close();
-                                                }
-                                                if(ps3!=null) {
-                                                    ps3.close();
-                                                }if(rs3!=null) {
-                                                    rs3.close();
-                                                }
-                                            }
-                                        }
-                                        if(shouldContinue){
-                                            continue;
-                                        }
-                                        taskThread.setStartRecordId(startPk);
-                                        taskThread.setStopRecordId(stopPk);
-                                    }
+
                                     taskThreadService.insert(taskThread);
-                                    executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from.getConnection(),to.getConnection(),taskThread));
+                                    executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread));
                                 }else{
                                     int round=needToProccessCount/DataTransferConst.COUNT_PER_THREAD;
                                     if(needToProccessCount% DataTransferConst.COUNT_PER_THREAD>0){
@@ -233,6 +139,13 @@ public class StartTaskThread extends Thread {
                                                 ps7.setDate(1, new java.sql.Date(beginPerTask));
                                                 ps7.setDate(2, new java.sql.Date(endPerTask));
                                                 rs7 = ps7.executeQuery();
+                                                if (rs7.next()) {
+                                                    int count= rs7.getInt(1);
+                                                    if(count==0){
+                                                        continue;
+                                                    }
+                                                    taskThread.setRecordCount(count);
+                                                }
                                             }finally {
                                                 ps7.close();
                                                 rs7.close();
@@ -241,53 +154,6 @@ public class StartTaskThread extends Thread {
                                                 taskThread.setRecordCount(rs7.getInt(1));
                                             }
 
-                                            rs4   = dbmd.getPrimaryKeys(null, null, tableName);
-                                            List<String> pkList=new ArrayList<>();
-                                            while (rs.next())  {
-                                                pkList.add(rs4.getString("COLUMN_NAME"));
-                                            }
-                                            String startPk="";
-                                            String stopPk="";
-                                            boolean shouldContinue=false;
-                                            for(int k=0;k<pkList.size();k++) {
-                                                try{
-                                                    ps2 = conn.prepareStatement("select  " + pkList.get(k) + "  from " + tableName + "  where last_modified>? and last_modified<=? order by last_modified  limit 1");
-                                                    ps2.setDate(1, new java.sql.Date(beginPerTask));
-                                                    ps2.setDate(2, new java.sql.Date(endPerTask));
-                                                    rs2 = ps2.executeQuery();
-                                                    if (rs2.next()) {
-                                                        startPk+=rs2.getLong(1);
-                                                    }else{
-                                                        shouldContinue=true;
-                                                        break;
-                                                    }
-
-                                                    ps3 = conn.prepareStatement("select " + pkList.get(k) + "  from " + tableName + "  where last_modified>? and last_modified<=? order by last_modified desc  limit 1");
-                                                    ps3.setDate(1, new java.sql.Date(beginPerTask));
-                                                    ps3.setDate(2, new java.sql.Date(endPerTask));
-                                                    rs3 = ps3.executeQuery();
-                                                    if (rs3.next()) {
-                                                        stopPk+=rs3.getLong(1);
-                                                    }
-                                                }finally {
-                                                    if(ps2!=null) {
-                                                        ps2.close();
-                                                    }
-                                                    if(rs2!=null) {
-                                                        rs2.close();
-                                                    }
-                                                    if(ps3!=null) {
-                                                        ps3.close();
-                                                    }if(rs3!=null) {
-                                                        rs3.close();
-                                                    }
-                                                }
-                                            }
-                                            if(shouldContinue){
-                                                continue;
-                                            }
-                                            taskThread.setStartRecordId(startPk);
-                                            taskThread.setStopRecordId(stopPk);
                                         }else{
                                             PreparedStatement ps7 =null;
                                             ResultSet rs7=null;
@@ -297,64 +163,20 @@ public class StartTaskThread extends Thread {
                                                 ps7.setDate(2, new java.sql.Date(endPerTask));
                                                 rs7= ps7.executeQuery();
                                                 if (rs7.next()) {
-                                                    taskThread.setRecordCount(rs7.getInt(1));
+                                                    int count= rs7.getInt(1);
+                                                    if(count==0){
+                                                        continue;
+                                                    }
+                                                    taskThread.setRecordCount(count);
                                                 }
                                             }finally {
                                                 ps7.close();
                                                 rs7.close();
                                             }
-                                            rs4   = dbmd.getPrimaryKeys(null, null, tableName);
-                                            List<String> pkList=new ArrayList<>();
-                                            while (rs4.next())  {
-                                                pkList.add(rs4.getString("COLUMN_NAME"));
-                                            }
-                                            String startPk="";
-                                            String stopPk="";
-                                            boolean shouldContinue=false;
-                                            for(int k=0;k<pkList.size();k++) {
-                                                try {
-                                                    ps2 = conn.prepareStatement("select  " + pkList.get(k) + "  from " + tableName + "  where gmt_modified>? and gmt_modified<=? order by gmt_modified  limit 1");
 
-                                                    ps2.setDate(1, new java.sql.Date(beginPerTask));
-                                                    ps2.setDate(2, new java.sql.Date(endPerTask));
-                                                    rs2 = ps2.executeQuery();
-                                                    if (rs2.next()) {
-                                                        startPk+=rs2.getLong(1);
-                                                    }else{
-                                                        shouldContinue=true;
-                                                        break;
-                                                    }
-
-                                                    ps3 = conn.prepareStatement("select " + pkList.get(k) + "  from " + tableName + "  where gmt_modified>? and gmt_modified<=? order by gmt_modified desc  limit 1");
-
-                                                    ps3.setDate(1, new java.sql.Date(beginPerTask));
-                                                    ps3.setDate(2, new java.sql.Date(endPerTask));
-                                                    rs3 = ps3.executeQuery();
-                                                    if (rs3.next()) {
-                                                        stopPk+=rs3.getLong(1);
-                                                    }
-                                                }finally {
-                                                    if(ps2!=null) {
-                                                        ps2.close();
-                                                    }
-                                                    if(rs2!=null) {
-                                                        rs2.close();
-                                                    }
-                                                    if(ps3!=null) {
-                                                        ps3.close();
-                                                    }if(rs3!=null) {
-                                                        rs3.close();
-                                                    }
-                                                }
-                                            }
-                                            if(shouldContinue){
-                                                continue;
-                                            }
-                                            taskThread.setStartRecordId(startPk);
-                                            taskThread.setStopRecordId(stopPk);
                                         }
                                         taskThreadService.insert(taskThread);
-                                        executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from.getConnection(),to.getConnection(),taskThread));
+                                        executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread));
                                     }
 
                                 }
@@ -364,17 +186,22 @@ public class StartTaskThread extends Thread {
                             e.printStackTrace();
                         } finally {
                             try {
-                                rs.close();
+                                if(rs!=null) {
+                                    rs.close();
+                                }
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
                             try {
-                                ps.close();
+                                if(ps!=null) {
+                                    ps.close();
+                                }
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
-
-                            rs4.close();
+                            if(rs4!=null) {
+                                rs4.close();
+                            }
                         }
                     }
                 }else{
@@ -407,100 +234,9 @@ public class StartTaskThread extends Thread {
                                     taskThread.setSuccessCount(0);
                                     taskThread.setTableName(tableName);
                                     taskThread.setRecordEndTime(task.getRecordModifyTimeEnd());
-                                    if(tableName.equals("sequences")) {
-                                        rs4   = dbmd.getPrimaryKeys(null, null, tableName);
-                                        List<String> pkList=new ArrayList<>();
-                                        while (rs.next())  {
-                                            pkList.add(rs4.getString("COLUMN_NAME"));
-                                        }
-                                        String startPk="";
-                                        String stopPk="";
-                                        boolean shouldContinue=false;
-                                        for(int j=0;j<pkList.size();j++) {
-                                            try{
-                                                ps2 = conn.prepareStatement("select  "+pkList.get(j)+"  from " + tableName + "  where  last_modified<=? order by last_modified  limit 1");
-                                                ps2.setDate(1, new java.sql.Date(task.getRecordModifyTimeEnd().getTime()));
-                                                rs2 = ps2.executeQuery();
-                                                if (rs2.next()) {
-                                                    startPk+=rs2.getLong(1);
-                                                }else{
-                                                    shouldContinue=true;
-                                                    break;
-                                                }
-                                                ps3 = conn.prepareStatement("select "+pkList.get(j)+"  from " + tableName + "  where last_modified>? and last_modified<=? order by last_modified desc limit 1");
-                                                ps3.setDate(1, new java.sql.Date(task.getRecordModifyTimeBegin().getTime()));
-                                                ps3.setDate(2, new java.sql.Date(task.getRecordModifyTimeEnd().getTime()));
-                                                rs3 = ps3.executeQuery();
-                                                if (rs3.next()) {
-                                                    stopPk+=rs3.getLong(1);
-                                                }
-                                            }finally {
-                                                if(ps2!=null) {
-                                                    ps2.close();
-                                                }
-                                                if(rs2!=null) {
-                                                    rs2.close();
-                                                }
-                                                if(ps3!=null) {
-                                                    ps3.close();
-                                                }if(rs3!=null) {
-                                                    rs3.close();
-                                                }
-                                            }
-                                        }
-                                        if(shouldContinue){
-                                            continue;
-                                        }
-                                        taskThread.setStartRecordId(startPk);
-                                        taskThread.setStopRecordId(stopPk);
-                                    }else{
-                                        rs4   = dbmd.getPrimaryKeys(null, null, tableName);
-                                        List<String> pkList=new ArrayList<>();
-                                        while (rs.next())  {
-                                            pkList.add(rs4.getString("COLUMN_NAME"));
-                                        }
-                                        String startPk="";
-                                        String stopPk="";
-                                        boolean shouldContinue=false;
-                                        for(int j=0;j<pkList.size();j++) {
-                                            try{
-                                                ps2 = conn.prepareStatement("select  "+pkList.get(j)+"  from " + tableName + "  where  gmt_modified<=? order by gmt_modified  limit 1");
-                                                ps2.setDate(1, new java.sql.Date(task.getRecordModifyTimeEnd().getTime()));
-                                                rs2 = ps2.executeQuery();
-                                                if (rs2.next()) {
-                                                    startPk+=rs2.getLong(1);
-                                                }else{
-                                                    shouldContinue=true;
-                                                    break;
-                                                }
-                                                ps3 = conn.prepareStatement("select "+pkList.get(j)+"  from " + tableName + "  where gmt_modified<=? order by gmt_modified desc limit 1");
-                                                ps3.setDate(1, new java.sql.Date(task.getRecordModifyTimeEnd().getTime()));
-                                                rs3 = ps3.executeQuery();
-                                                if (rs3.next()) {
-                                                    stopPk+=rs3.getLong(1);
-                                                }
-                                            }finally {
-                                                if(ps2!=null) {
-                                                    ps2.close();
-                                                }
-                                                if(rs2!=null) {
-                                                    rs2.close();
-                                                }
-                                                if(ps3!=null) {
-                                                    ps3.close();
-                                                }if(rs3!=null) {
-                                                    rs3.close();
-                                                }
-                                            }
-                                        }
-                                        if(shouldContinue){
-                                            continue;
-                                        }
-                                        taskThread.setStartRecordId(startPk);
-                                        taskThread.setStopRecordId(stopPk);
-                                    }
+
                                     taskThreadService.insert(taskThread);
-                                    executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from.getConnection(),to.getConnection(),taskThread));
+                                    executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread));
                                 }else{
                                     int round=needToProccessCount/DataTransferConst.COUNT_PER_THREAD;
                                     if(needToProccessCount% DataTransferConst.COUNT_PER_THREAD>0){
@@ -536,76 +272,18 @@ public class StartTaskThread extends Thread {
                                                 ps7.setDate(1, new java.sql.Date(beginPerTask));
                                                 ps7.setDate(2, new java.sql.Date(endPerTask));
                                                 rs7 = ps7.executeQuery();
+                                                if (rs7.next()) {
+                                                    int count= rs7.getInt(1);
+                                                    if(count==0){
+                                                        continue;
+                                                    }
+                                                    taskThread.setRecordCount(count);
+                                                }
                                             }finally {
                                                 ps7.close();
                                                 rs7.close();
                                             }
-                                            rs4   = dbmd.getPrimaryKeys(null, null, tableName);
-                                            List<String> pkList=new ArrayList<>();
-                                            while (rs.next())  {
-                                                pkList.add(rs4.getString("COLUMN_NAME"));
-                                            }
-                                            String startPk="";
-                                            String stopPk="";
-                                            boolean shouldContinue=false;
-                                            for(int k=0;k<pkList.size();k++) {
-                                                try{
-                                                    if(beginPerTask==begin) {
-                                                        ps2 = conn.prepareStatement("select  " + pkList.get(k) + "  from " + tableName + "  where  last_modified<=? order by last_modified  limit 1");
-                                                        ps2.setDate(1, new java.sql.Date(endPerTask));
-                                                        rs2 = ps2.executeQuery();
-                                                        if (rs2.next()) {
-                                                            startPk += rs2.getLong(1);
-                                                        }else{
-                                                            shouldContinue=true;
-                                                            break;
-                                                        }
-                                                        ps3 = conn.prepareStatement("select " + pkList.get(k) + "  from " + tableName + "  where last_modified<=? order by last_modified desc limit 1");
-                                                        ps3.setDate(1, new java.sql.Date(endPerTask));
-                                                        rs3 = ps3.executeQuery();
-                                                        if (rs3.next()) {
-                                                            stopPk += rs3.getLong(1);
-                                                        }
-                                                    }else{
-                                                        ps2 = conn.prepareStatement("select  " + pkList.get(k) + "  from " + tableName + "  where last_modified>? and last_modified<=? order by last_modified  limit 1");
-                                                        ps2.setDate(1, new java.sql.Date(beginPerTask));
-                                                        ps2.setDate(2, new java.sql.Date(endPerTask));
-                                                        rs2 = ps2.executeQuery();
-                                                        if (rs2.next()) {
-                                                            startPk += rs2.getLong(1);
-                                                        }else{
-                                                            shouldContinue=true;
-                                                            break;
-                                                        }
 
-                                                        ps3 = conn.prepareStatement("select " + pkList.get(k) + "  from " + tableName + "  where last_modified>? and last_modified<=? order by last_modified desc limit 1");
-
-                                                        ps3.setDate(1, new java.sql.Date(beginPerTask));
-                                                        ps3.setDate(2, new java.sql.Date(endPerTask));
-                                                        rs3 = ps3.executeQuery();
-                                                        if (rs3.next()) {
-                                                            stopPk += rs3.getLong(1);
-                                                        }
-                                                    }
-                                                }finally {
-                                                    if(ps2!=null) {
-                                                        ps2.close();
-                                                    }
-                                                    if(rs2!=null) {
-                                                        rs2.close();
-                                                    }
-                                                    if(ps3!=null) {
-                                                        ps3.close();
-                                                    }if(rs3!=null) {
-                                                        rs3.close();
-                                                    }
-                                                }
-                                            }
-                                            if(shouldContinue){
-                                                continue;
-                                            }
-                                            taskThread.setStartRecordId(startPk);
-                                            taskThread.setStopRecordId(stopPk);
                                         }else{
                                             PreparedStatement ps7 =null;
                                             ResultSet rs7=null;
@@ -615,80 +293,20 @@ public class StartTaskThread extends Thread {
                                                 ps7.setDate(2, new java.sql.Date(endPerTask));
                                                 rs7= ps7.executeQuery();
                                                 if (rs7.next()) {
-                                                    taskThread.setRecordCount(rs7.getInt(1));
+                                                    int count= rs7.getInt(1);
+                                                    if(count==0){
+                                                        continue;
+                                                    }
+                                                    taskThread.setRecordCount(count);
                                                 }
                                             }finally {
                                                 ps7.close();
                                                 rs7.close();
                                             }
-                                            rs4   = dbmd.getPrimaryKeys(null, null, tableName);
-                                            List<String> pkList=new ArrayList<>();
-                                            while (rs.next())  {
-                                                pkList.add(rs4.getString("COLUMN_NAME"));
-                                            }
-                                            String startPk="";
-                                            String stopPk="";
-                                            boolean shouldContinue=false;
-                                            for(int k=0;k<pkList.size();k++) {
-                                                try{
-                                                    if(begin==beginPerTask) {
-                                                        ps2 = conn.prepareStatement("select  " + pkList.get(k) + "  from " + tableName + "  where  gmt_modified<=? order by gmt_modified  limit 1");
-                                                        ps2.setDate(1, new java.sql.Date(endPerTask));
-                                                        rs2 = ps2.executeQuery();
-                                                        if (rs2.next()) {
-                                                            startPk += rs2.getLong(1);
-                                                        }else{
-                                                            shouldContinue=true;
-                                                            break;
-                                                        }
-                                                        ps3 = conn.prepareStatement("select " + pkList.get(k) + "  from " + tableName + "  where gmt_modified<=? order by gmt_modified desc limit 1");
-                                                        ps3.setDate(1, new java.sql.Date(endPerTask));
-                                                        rs3 = ps3.executeQuery();
-                                                        if (rs3.next()) {
-                                                            stopPk += rs3.getLong(1);
-                                                        }
-                                                    }else{
-                                                        ps2 = conn.prepareStatement("select  " + pkList.get(k) + "  from " + tableName + "  where gmt_modified>? and gmt_modified<=? order by gmt_modified  limit 1");
-                                                        ps2.setDate(1, new java.sql.Date(beginPerTask));
-                                                        ps2.setDate(2, new java.sql.Date(endPerTask));
-                                                        rs2 = ps2.executeQuery();
-                                                        if (rs2.next()) {
-                                                            startPk += rs2.getLong(1);
-                                                        }else{
-                                                            shouldContinue=true;
-                                                            break;
-                                                        }
-                                                        ps3 = conn.prepareStatement("select " + pkList.get(k) + "  from " + tableName + "  where gmt_modified>? and gmt_modified<=? order by gmt_modified  desc limit 1");
 
-                                                        ps3.setDate(1, new java.sql.Date(beginPerTask));
-                                                        ps3.setDate(2, new java.sql.Date(endPerTask));
-                                                        rs3 = ps3.executeQuery();
-                                                        if (rs3.next()) {
-                                                            stopPk += rs3.getLong(1);
-                                                        }
-                                                    }
-                                                }finally {
-                                                    if(ps2!=null) {
-                                                        ps2.close();
-                                                    }
-                                                    if(rs2!=null) {
-                                                        rs2.close();
-                                                    }
-                                                    if(ps3!=null) {
-                                                        ps3.close();
-                                                    }if(rs3!=null) {
-                                                        rs3.close();
-                                                    }
-                                                }
-                                            }
-                                            if(shouldContinue){
-                                                continue;
-                                            }
-                                            taskThread.setStartRecordId(startPk);
-                                            taskThread.setStopRecordId(stopPk);
                                         }
                                         taskThreadService.insert(taskThread);
-                                        executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from.getConnection(),to.getConnection(),taskThread));
+                                        executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread));
                                     }
 
                                 }
@@ -698,17 +316,22 @@ public class StartTaskThread extends Thread {
                             e.printStackTrace();
                         } finally {
                             try {
-                                rs.close();
+                                if(rs!=null) {
+                                    rs.close();
+                                }
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
                             try {
-                                ps.close();
+                                if(ps!=null) {
+                                    ps.close();
+                                }
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
-
-                            rs4.close();
+                            if(rs4!=null) {
+                                rs4.close();
+                            }
                         }
                     }
                 }
@@ -716,7 +339,9 @@ public class StartTaskThread extends Thread {
                 e.printStackTrace();
             } finally {
                 try {
-                    rs0.close();
+                    if(rs0!=null) {
+                        rs0.close();
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -728,7 +353,9 @@ public class StartTaskThread extends Thread {
             e.printStackTrace();
         }finally {
             try {
-                conn.close();
+                if(conn!=null) {
+                    conn.close();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
