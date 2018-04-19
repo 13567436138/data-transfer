@@ -104,7 +104,7 @@ public class StartTaskThread extends Thread {
                                     taskThread.setRecordEndTime(task.getRecordModifyTimeEnd());
 
                                     taskThreadService.insert(taskThread);
-                                    executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread));
+                                    executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread,taskThreadService));
                                 }else{
                                     int round=needToProccessCount/DataTransferConst.COUNT_PER_THREAD;
                                     if(needToProccessCount% DataTransferConst.COUNT_PER_THREAD>0){
@@ -176,7 +176,7 @@ public class StartTaskThread extends Thread {
 
                                         }
                                         taskThreadService.insert(taskThread);
-                                        executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread));
+                                        executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread,taskThreadService));
                                     }
 
                                 }
@@ -236,7 +236,7 @@ public class StartTaskThread extends Thread {
                                     taskThread.setRecordEndTime(task.getRecordModifyTimeEnd());
 
                                     taskThreadService.insert(taskThread);
-                                    executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread));
+                                    executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread,taskThreadService));
                                 }else{
                                     int round=needToProccessCount/DataTransferConst.COUNT_PER_THREAD;
                                     if(needToProccessCount% DataTransferConst.COUNT_PER_THREAD>0){
@@ -306,7 +306,7 @@ public class StartTaskThread extends Thread {
 
                                         }
                                         taskThreadService.insert(taskThread);
-                                        executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread));
+                                        executorService.submit(new DoTransferThread(DataTransferConst.DO_JOB_TYPE_NEW,from,to,taskThread,taskThreadService));
                                     }
 
                                 }

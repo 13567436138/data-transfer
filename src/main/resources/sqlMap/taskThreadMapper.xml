@@ -50,6 +50,10 @@
 
     </select>
 
+    <select id="selectByPrimaryKey" parameterType="String" resultMap="taskThreadMap">
+        select * from taskthread where id=#{id}
+    </select>
+
     <insert id="insert" parameterType="TaskThread" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
         <selectKey resultType="int" keyProperty="id" order="AFTER">
             SELECT LAST_INSERT_ID()
@@ -86,5 +90,17 @@
             #{recordStartTime}
         )
     </insert>
+
+    <update id="updateByPrimaryKey" parameterType="TaskThread">
+        update taskthread set
+            name=#{name},
+            successCount=#{successCount},
+            failCount=#{failCount},
+            startTime=#{startTime},
+            stopTime=#{stopTime},
+            status=#{status},
+            runCount=#{runCount}
+            where id=#{id}
+    </update>
 </mapper>
 

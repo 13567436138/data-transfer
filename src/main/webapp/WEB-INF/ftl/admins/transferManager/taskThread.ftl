@@ -34,18 +34,67 @@
                    		{field:'mainTaskName',title:'主任务名称',width:400,align:'center'},
                    		{field:'taskName',title:'任务名称',width:400,align:'center'},
                    		{field:'name',title:'名称',width:200,align:'center'},
-                   		{field:'tableName',title:'表名',width:100,align:'center'},
+                   		{field:'tableName',title:'表名',width:300,align:'center'},
                    		{field:'startRecordId',title:'开始记录id',width:100,align:'center'},
 						{field:'stopRecordId',title:'结束记录id',width:100,align:'center'},
 						{field:'recordCount',title:'记录总数',width:100,align:'center'},
 						{field:'successCount',title:'成功记录数量',width:100,align:'center'},
 						{field:'failCount',title:'失败记录数量',width:100,align:'center'},
-						{field:'status',title:'状态',width:100,align:'center'},
-						{field:'startTime',title:'开始时间',width:100,align:'center'},
-						{field:'stopTime',title:'结束时间',width:100,align:'center'},
+						{field:'status',title:'状态',width:150,align:'center',formatter:function(cellvalue, options, rowObject){
+								if(cellvalue==1){
+									return "新建";
+								}else if(cellvalue==2){
+									return "运行中";
+								}else if(cellvalue==3){
+									return "成功";
+								}else if(cellvalue==4){
+									return "失败";
+								}else if(cellvalue==5){
+									return "重新运行中";
+								}else if(cellvalue==6){
+									return "重新运行失败";
+								}else if(cellvalue==7){
+									return "重新运行成功";
+								}
+							}
+						},
+						{field:'startTime',title:'开始时间',width:150,align:'center',formatter:function(value,row,index) {
+								if (value > 0) {
+									var unixTimestamp = new Date(value);
+									return unixTimestamp.getFullYear() + "-" + (unixTimestamp.getMonth() + 1) + "-" + unixTimestamp.getDate()+" "+unixTimestamp.getHours()+":"+unixTimestamp.getMinutes()+":"+unixTimestamp.getSeconds();
+								}else{
+									return "";
+								}
+							}
+						},
+						{field:'stopTime',title:'结束时间',width:150,align:'center',formatter:function(value,row,index) {
+								if (value > 0) {
+									var unixTimestamp = new Date(value);
+									return unixTimestamp.getFullYear() + "-" + (unixTimestamp.getMonth() + 1) + "-" + unixTimestamp.getDate() + " " + unixTimestamp.getHours() + ":" + unixTimestamp.getMinutes() + ":" + unixTimestamp.getSeconds();
+								}else{
+									return "";
+								}
+							}
+						},
 						{field:'runCount',title:'运行次数',width:100,align:'center'},
-						{field:'recordStartTime',title:'记录开始时间',width:100,align:'center'},
-						{field:'recordEndTime',title:'技术结束时间',width:100,align:'center'}
+						{field:'recordStartTime',title:'记录开始时间',width:150,align:'center',formatter:function(value,row,index) {
+								if (value > 0) {
+									var unixTimestamp = new Date(value);
+									return unixTimestamp.getFullYear() + "-" + (unixTimestamp.getMonth() + 1) + "-" + unixTimestamp.getDate()+" "+unixTimestamp.getHours()+":"+unixTimestamp.getMinutes()+":"+unixTimestamp.getSeconds();
+								}else{
+									return "";
+								}
+							}
+						},
+						{field:'recordEndTime',title:'记录结束时间',width:150,align:'center',formatter:function(value,row,index) {
+								if (value > 0) {
+									var unixTimestamp = new Date(value);
+									return unixTimestamp.getFullYear() + "-" + (unixTimestamp.getMonth() + 1) + "-" + unixTimestamp.getDate() + " " + unixTimestamp.getHours() + ":" + unixTimestamp.getMinutes() + ":" + unixTimestamp.getSeconds();
+								}else{
+									return "";
+								}
+							}
+						}
 	        ]],
 	        
 	         onBeforeLoad: function (params) {
@@ -111,6 +160,30 @@
             });
         })
 	});
+
+	function threadRedo() {
+        var rows = $('#dataList').datagrid("getSelections");
+        if (rows.length != 1) {
+            $.messager.alert('提示框', '请选择一个主任务', 'warning');
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "${contextPath}/transfer/thread/redo",
+            data: {id:rows[0].id},
+            dataType: "json",
+            success: function(data){
+                $('#dataList').datagrid('clearSelections');//清空选择'
+                var pageNumber = $('#dataList').datagrid('getPager').data("pagination").options.pageNumber;
+                loadList(pageNumber);
+                if (data.result=='ok') {
+                    showBox("提示信息", "成功", 'info');
+                } else {
+                    showError(data);
+                }
+            }
+        });
+    }
 	</script>
   </head>
   
@@ -119,7 +192,7 @@
 		<div id='dataList'>
 			<div id="tb" style="padding:5px;height:auto">
 		<div style="margin-bottom:5px">
-
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="threadRedo();">重做</a>|
 		</div>
 		<div>
 			<form  id='searchForm' action="" method="post">

@@ -4,6 +4,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
 import com.youben.constant.DataTransferConst;
 import com.youben.entity.TaskThread;
+import com.youben.service.TaskThreadService;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,18 +22,25 @@ public class DoTransferThread extends Thread {
     private DruidDataSource from;
     private DruidDataSource to;
     private TaskThread taskThread;
+    private TaskThreadService taskThreadService;
+    private Date fromDate;
+    private List<Integer> typeList=new ArrayList<>();
+    private List<String> columnNameList=new ArrayList<>();
 
-    public DoTransferThread(int type,DruidDataSource from,DruidDataSource to,TaskThread taskThread){
+    public DoTransferThread(int type,DruidDataSource from,DruidDataSource to,TaskThread taskThread,TaskThreadService taskThreadService){
         this.type=type;
         this.from=from;
         this.to=to;
         this.taskThread=taskThread;
+        this.taskThreadService=taskThreadService;
     }
     @Override
     public void run() {
         DruidPooledConnection fromConn = null;
         DruidPooledConnection toConn=null;
         ResultSet colRet=null;
+
+        int successCount=0;
 
         try {
             fromConn =from.getConnection();
@@ -41,134 +49,72 @@ public class DoTransferThread extends Thread {
             //JdbcUtil.createDestTables(fromConn,toConn);
 
             if(type== DataTransferConst.DO_JOB_TYPE_NEW){
+                taskThread.setStartTime(new Date());
+                taskThread.setStatus(DataTransferConst.TASKTHREAD_STATUS_RUN);
+                taskThread.setName(this.getName());
+                taskThreadService.update(taskThread);
+
                 String tableName=taskThread.getTableName();
 
                 DatabaseMetaData fromMetaData=fromConn.getMetaData();
                 colRet = fromMetaData.getColumns(null, "%", tableName, "%");
+                while (colRet.next()) {
+                    String columnName = colRet.getString("COLUMN_NAME");
+                    columnNameList.add(columnName);
+                    int type = colRet.getInt("DATA_TYPE");
+                    typeList.add(type);
+                }
+
                 int round=taskThread.getRecordCount()/DataTransferConst.COUNT_PER_QUERY;
                 if(taskThread.getRecordCount()%DataTransferConst.COUNT_PER_QUERY!=0){
                     round++;
                 }
-                Date fromDate=taskThread.getRecordStartTime();
+                fromDate=taskThread.getRecordStartTime();
                 for(int i=0;i<round;i++) {
-                    String insertSql="replace  into "+tableName+"(";
-                    String valuesSql="values";
-                    PreparedStatement ps1=null;
-                    PreparedStatement ps2=null;
-                    PreparedStatement ps3=null;
-                    PreparedStatement ps4=null;
-                    ResultSet rs1=null;
-                    ResultSet rs2=null;
-                    ResultSet rs3=null;
-                    try {
                         if (tableName.equals("sequences")) {
-                            ps1=fromConn.prepareStatement("select last_modified from " + tableName + " where last_modified>? limit " + DataTransferConst.COUNT_PER_QUERY + ",1");
-                            ps1.setDate(1,new java.sql.Date(fromDate.getTime()));
-                            rs1=ps1.executeQuery();
-                            Date toDate=null;
-                            if(rs1.next()){
-                                toDate = rs1.getDate(1);
-                            }
-                            if(toDate.getTime()>taskThread.getRecordEndTime().getTime()){
-                                toDate=taskThread.getRecordEndTime();
-                            }
-                            ps2=fromConn.prepareStatement("select * from " + tableName + " where last_modified>? and last_modified<=?  ");
-                            ps2.setDate(1,new java.sql.Date(fromDate.getTime()));
-                            ps2.setDate(2,new java.sql.Date(toDate.getTime()));
-                            rs2=ps2.executeQuery();
-                            fromDate=toDate;
-
-                            List<Integer> typeList=new ArrayList<>();
-                            while (colRet.next()) {
-                                String columnName = colRet.getString("COLUMN_NAME");
-                                int type = colRet.getInt("DATA_TYPE ");
-                                typeList.add(type);
-                                insertSql += columnName + ",";
-                            }
-
-                            ps3=fromConn.prepareStatement("select count(*) from " + tableName + " where last_modified>? and last_modified<=?  ");
-                            ps3.setDate(1,new java.sql.Date(fromDate.getTime()));
-                            ps3.setDate(2,new java.sql.Date(toDate.getTime()));
-                            rs3=ps3.executeQuery();
-                            if(rs3.next()){
-                                int count=rs3.getInt(1);
-                                String singleValue="(";
-                                for(int k=0;k<typeList.size();k++){
-                                    singleValue+="?,";
-                                }
-                                singleValue=singleValue.substring(0,singleValue.length()-1);
-                                singleValue+=")";
-                                for(int k=0;k<count;k++){
-                                    valuesSql+=singleValue+",";
-                                }
-                                valuesSql=valuesSql.substring(0,valuesSql.length()-1);
-                            }
-
-                            insertSql=insertSql.substring(0,insertSql.length()-1);
-                            insertSql+=valuesSql;
-
-                            ps4=toConn.prepareStatement(insertSql);
-
-                            int index=1;
-                            while(rs2.next()){
-                                for(int j=0;j<typeList.size();j++){
-                                    setParamter(ps4,typeList.get(j),index,rs2,j+1);
-                                    index++;
-                                }
-                            }
-
-                            ps4.executeUpdate();
+                            successCount+=insert(fromConn,toConn,tableName,"last_modified");
 
                         } else {
-                            ps1=fromConn.prepareStatement("select last_modified from " + tableName + " where gmt_modified>? limit " + DataTransferConst.COUNT_PER_QUERY + ",1");
-                            ps1.setDate(1,new java.sql.Date(fromDate.getTime()));
-                            rs1=ps1.executeQuery();
-                            Date toDate=null;
-                            if(rs1.next()){
-                                toDate = rs1.getDate(1);
-                            }
-                            if(toDate.getTime()>taskThread.getRecordEndTime().getTime()){
-                                toDate=taskThread.getRecordEndTime();
-                            }
-                            ps2=fromConn.prepareStatement("select * from " + tableName + " where gmt_modified>? and gmt_modified<=?  ");
-                            ps2.setDate(1,new java.sql.Date(fromDate.getTime()));
-                            ps2.setDate(2,new java.sql.Date(toDate.getTime()));
-                            rs2=ps2.executeQuery();
-                            fromDate=toDate;
-
+                            successCount+= insert(fromConn, toConn, tableName, "gmt_modified");
                         }
-
-
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }finally {
-                        if(ps1!=null){
-                            ps1.close();
-                        }
-                        if(ps2!=null){
-                            ps2.close();
-                        }
-                        if(rs1!=null){
-                            rs1.close();
-                        }
-                        if(rs2!=null){
-                            rs2.close();
-                        }
-                        if(ps3!=null){
-                            ps3.close();
-                        }
-                        if(rs3!=null){
-                            rs3.close();
-                        }
-                        if(ps4!=null){
-                            ps4.close();
-                        }
-                    }
+                }
+                if(taskThread.getRecordCount()==successCount){
+                    taskThread.setStatus(DataTransferConst.TASKTHREAD_STATUS_SUCCESS);
                 }
             }else if(type==DataTransferConst.DO_JOB_TYPE_REDO){
+                taskThread.setStartTime(new Date());
+                taskThread.setName(this.getName());
+                taskThread.setRunCount(taskThread.getRunCount()+1);
+                taskThread.setStatus(DataTransferConst.TASKTHREAD_STATUS_RERUN);
+                taskThreadService.update(taskThread);
 
+                String tableName=taskThread.getTableName();
+
+                DatabaseMetaData fromMetaData=fromConn.getMetaData();
+                colRet = fromMetaData.getColumns(null, "%", tableName, "%");
+                while (colRet.next()) {
+                    String columnName = colRet.getString("COLUMN_NAME");
+                    columnNameList.add(columnName);
+                    int type = colRet.getInt("DATA_TYPE");
+                    typeList.add(type);
+                }
+                int round=taskThread.getRecordCount()/DataTransferConst.COUNT_PER_QUERY;
+                if(taskThread.getRecordCount()%DataTransferConst.COUNT_PER_QUERY!=0){
+                    round++;
+                }
+                fromDate=taskThread.getRecordStartTime();
+                for(int i=0;i<round;i++) {
+                    if (tableName.equals("sequences")) {
+                        successCount+=insert(fromConn,toConn,tableName,"last_modified");
+                    } else {
+                        successCount+= insert(fromConn, toConn, tableName, "gmt_modified");
+                    }
+                }
+                if(taskThread.getRecordCount()==successCount){
+                    taskThread.setStatus(DataTransferConst.TASKTHREAD_STATUS_RERUN_SUCCESS);
+                }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }finally {
             try {
@@ -182,10 +128,142 @@ public class DoTransferThread extends Thread {
                 e.printStackTrace();
             }
             try {
-                colRet.close();
+                if(colRet!=null) {
+                    colRet.close();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            taskThread.setStopTime(new Date());
+            taskThread.setSuccessCount(successCount);
+
+            taskThreadService.update(taskThread);
+        }
+
+    }
+
+    private int insert(DruidPooledConnection fromConn,DruidPooledConnection toConn,String tableName,String modifyField){
+        String insertSql="replace  into "+tableName+"(";
+        String valuesSql="values";
+        PreparedStatement ps1=null;
+        PreparedStatement ps2=null;
+        PreparedStatement ps3=null;
+        PreparedStatement ps4=null;
+        ResultSet rs1=null;
+        ResultSet rs2=null;
+        ResultSet rs3=null;
+        int successCount=0;
+        try{
+            ps1=fromConn.prepareStatement("select "+modifyField+" from " + tableName + " where "+modifyField+">? order by "+modifyField+" limit " + DataTransferConst.COUNT_PER_QUERY + ",1");
+            ps1.setTimestamp(1,new java.sql.Timestamp(fromDate.getTime()));
+            rs1=ps1.executeQuery();
+            Date toDate=null;
+            if(rs1.next()){
+                toDate = rs1.getTimestamp(1);
+            }
+            if(toDate.getTime()>taskThread.getRecordEndTime().getTime()){
+                toDate=taskThread.getRecordEndTime();
+            }
+            ps2=fromConn.prepareStatement("select * from " + tableName + " where "+modifyField+">? and "+modifyField+"<=?  ");
+            ps2.setTimestamp(1,new java.sql.Timestamp(fromDate.getTime()));
+            ps2.setTimestamp(2,new java.sql.Timestamp(toDate.getTime()));
+            rs2=ps2.executeQuery();
+
+            for(int j=0;j<columnNameList.size();j++){
+                insertSql += columnNameList.get(j) + ",";
+            }
+
+            insertSql=insertSql.substring(0,insertSql.length()-1);
+            insertSql+=")";
+
+            ps3=fromConn.prepareStatement("select count(*) from " + tableName + " where "+modifyField+">? and "+modifyField+"<=?  ");
+            ps3.setTimestamp(1,new java.sql.Timestamp(fromDate.getTime()));
+            ps3.setTimestamp(2,new java.sql.Timestamp(toDate.getTime()));
+            rs3=ps3.executeQuery();
+            if(rs3.next()){
+                successCount++;
+                int count=rs3.getInt(1);
+                String singleValue="(";
+                for(int k=0;k<typeList.size();k++){
+                    singleValue+="?,";
+                }
+                singleValue=singleValue.substring(0,singleValue.length()-1);
+                singleValue+=")";
+                for(int k=0;k<count;k++){
+                    valuesSql+=singleValue+",";
+                }
+                valuesSql=valuesSql.substring(0,valuesSql.length()-1);
+            }
+
+            insertSql+=valuesSql;
+
+            ps4=toConn.prepareStatement(insertSql);
+
+            int index=1;
+            while(rs2.next()){
+                for(int j=0;j<typeList.size();j++){
+                    setParamter(ps4,typeList.get(j),index,rs2,j+1);
+                    index++;
+                }
+            }
+
+            ps4.executeUpdate();
+
+            fromDate=toDate;
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if(ps1!=null){
+                try {
+                    ps1.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps2!=null){
+                try {
+                    ps2.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs1!=null){
+                try {
+                    rs1.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs2!=null){
+                try {
+                    rs2.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps3!=null){
+                try {
+                    ps3.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(rs3!=null){
+                try {
+                    rs3.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(ps4!=null){
+                try {
+                    ps4.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            return successCount;
         }
     }
 
