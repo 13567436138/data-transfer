@@ -58,12 +58,7 @@ public class DoTransferThread extends Thread {
 
                 DatabaseMetaData fromMetaData=fromConn.getMetaData();
                 colRet = fromMetaData.getColumns(null, "%", tableName, "%");
-                while (colRet.next()) {
-                    String columnName = colRet.getString("COLUMN_NAME");
-                    columnNameList.add(columnName);
-                    int type = colRet.getInt("DATA_TYPE");
-                    typeList.add(type);
-                }
+                dealColRet(colRet);
 
                 int round=taskThread.getRecordCount()/DataTransferConst.COUNT_PER_QUERY;
                 if(taskThread.getRecordCount()%DataTransferConst.COUNT_PER_QUERY!=0){
@@ -78,9 +73,7 @@ public class DoTransferThread extends Thread {
                             successCount+= insert(fromConn, toConn, tableName, "gmt_modified");
                         }
                 }
-                if(taskThread.getRecordCount()==successCount){
-                    taskThread.setStatus(DataTransferConst.TASKTHREAD_STATUS_SUCCESS);
-                }
+
             }else if(type==DataTransferConst.DO_JOB_TYPE_REDO){
                 taskThread.setStartTime(new Date());
                 taskThread.setName(this.getName());
@@ -92,12 +85,8 @@ public class DoTransferThread extends Thread {
 
                 DatabaseMetaData fromMetaData=fromConn.getMetaData();
                 colRet = fromMetaData.getColumns(null, "%", tableName, "%");
-                while (colRet.next()) {
-                    String columnName = colRet.getString("COLUMN_NAME");
-                    columnNameList.add(columnName);
-                    int type = colRet.getInt("DATA_TYPE");
-                    typeList.add(type);
-                }
+                dealColRet(colRet);
+
                 int round=taskThread.getRecordCount()/DataTransferConst.COUNT_PER_QUERY;
                 if(taskThread.getRecordCount()%DataTransferConst.COUNT_PER_QUERY!=0){
                     round++;
@@ -110,9 +99,7 @@ public class DoTransferThread extends Thread {
                         successCount+= insert(fromConn, toConn, tableName, "gmt_modified");
                     }
                 }
-                if(taskThread.getRecordCount()==successCount){
-                    taskThread.setStatus(DataTransferConst.TASKTHREAD_STATUS_RERUN_SUCCESS);
-                }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -136,10 +123,31 @@ public class DoTransferThread extends Thread {
             }
             taskThread.setStopTime(new Date());
             taskThread.setSuccessCount(successCount);
-
+            if(type==DataTransferConst.DO_JOB_TYPE_NEW){
+                if(taskThread.getRecordCount()==successCount){
+                    taskThread.setStatus(DataTransferConst.TASKTHREAD_STATUS_SUCCESS);
+                }else{
+                    taskThread.setStatus(DataTransferConst.TASKTHREAD_STATUS_FAIL);
+                }
+            }else{
+                if(taskThread.getRecordCount()==successCount){
+                    taskThread.setStatus(DataTransferConst.TASKTHREAD_STATUS_RERUN_SUCCESS);
+                }else{
+                    taskThread.setStatus(DataTransferConst.TASKTHREAD_STATUS_RERUN_FAIL);
+                }
+            }
             taskThreadService.update(taskThread);
         }
 
+    }
+
+    private void dealColRet(ResultSet colRet) throws SQLException {
+        while (colRet.next()) {
+            String columnName = colRet.getString("COLUMN_NAME");
+            columnNameList.add(columnName);
+            int type = colRet.getInt("DATA_TYPE");
+            typeList.add(type);
+        }
     }
 
     private int insert(DruidPooledConnection fromConn,DruidPooledConnection toConn,String tableName,String modifyField){
@@ -160,6 +168,9 @@ public class DoTransferThread extends Thread {
             Date toDate=null;
             if(rs1.next()){
                 toDate = rs1.getTimestamp(1);
+            }
+            if(toDate==null){
+                toDate=taskThread.getRecordEndTime();
             }
             if(toDate.getTime()>taskThread.getRecordEndTime().getTime()){
                 toDate=taskThread.getRecordEndTime();

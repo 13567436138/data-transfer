@@ -15,9 +15,10 @@ insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId fr
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values(-1,'导数据管理','导数据管理',null,2);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'发起导数据','发起导数据','/transfer/new',1);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'主任务列表','主任务列表','/transfer/mainTask/list',2);
-insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'数据库透视','数据库透视','/transfer/databaseInfo',3);
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'数据库透视','数据库透视','/transfer/databaseInfo/list',3);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'任务列表','任务列表','/transfer/task/list',4);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'线程列表','线程列表','/transfer/thread/list',5);
+insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'主任务透视','主任务透视','/transfer/mainTaskInfo/list',6);
 
 DROP TABLE IF EXISTS `datasource`;
 create table datasource(
@@ -72,4 +73,25 @@ create table taskthread(
   runCount int,
   recordEndTime datetime,
   recordStartTime datetime
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+drop table if exists databaseinfo;
+create table databaseinfo(
+   id int primary key auto_increment,
+   tableName varchar(128),
+   recordCount int(11),
+   recordEalyDate datetime,
+   recordLateDate datetime
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+drop table if exists maintaskinfo;
+create table maintaskinfo(
+    id int primary key auto_increment,
+    tableName varchar(128),
+    fromRecordCount int(11),
+    fromRecordEalyDate datetime,
+    fromRecordLateDate datetime,
+    toRecordCount int(11),
+    toRecordEalyDate datetime,
+    toRecordLateDate datetime
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
