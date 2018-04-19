@@ -16,4 +16,5 @@ public interface TaskService extends GenericService<Task> {
     int countRecord(int mainTaskId,String recordStartTime,String recordEndTime);
     void updateStatusById(int id,int status);
     List<Task> findByMainTaskId(int mainTaskId);
+    Task findLastTask(int mainTaskId);
 }

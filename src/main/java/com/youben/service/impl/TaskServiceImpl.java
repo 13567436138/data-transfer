@@ -169,4 +169,9 @@ public class TaskServiceImpl extends GenericServiceImpl<Task> implements TaskSer
     public List<Task> findByMainTaskId(int mainTaskId) {
         return taskMapper.findByMainTaskId(mainTaskId);
     }
+
+    @Override
+    public Task findLastTask(int mainTaskId) {
+        return taskMapper.findLastTask(mainTaskId);
+    }
 }

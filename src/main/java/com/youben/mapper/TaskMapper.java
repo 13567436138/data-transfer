@@ -18,4 +18,5 @@ public interface TaskMapper extends GenericMapper<Task> {
     int countByMainTaskId(int mainTaskId);
     void updateStatusById(@Param( "id")int id,@Param("status") int status);
     List<Task> findByMainTaskId(int mainTaskId);
+    Task findLastTask(int mainTaskId);
 }

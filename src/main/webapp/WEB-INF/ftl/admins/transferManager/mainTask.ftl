@@ -220,7 +220,13 @@
                           <input id="recordEndTime" type="text" class="easyui-datebox" required="required">
                       </td>
                   </tr>
-
+                  <tr>
+                      <td>是否从最近一次导入成功结束时间开始:</td>
+                      <td>
+                          <input type="radio" name="continueLast" value="true" checked  />是</br>
+                          <input type="radio" name="continueLast" value="false"  />否
+                      </td>
+                  </tr>
               </table>
           </form>
       </div>

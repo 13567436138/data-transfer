@@ -92,5 +92,9 @@
     <select id="findByMainTaskId" parameterType="int" resultMap="taskMap">
         select * from task where mainTaskId=#{mainTaskId}
     </select>
+
+    <select id="findLastTask" parameterType="int" resultMap="taskMap">
+        select * from task where mainTaskId=#{mainTaskId} order by recordModifyTimeEnd desc limit 1
+    </select>
 </mapper>
 

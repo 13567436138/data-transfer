@@ -32,6 +32,7 @@
 	        columns:[[   
                    		{field:'id',title:'任务编号',width:100,align:'center'},
                    		{field:'mainTaskName',title:'主任务名称',width:400,align:'center'},
+                        {field:'name',title:'任务名称',width:400,align:'center'},
                    		{field:'recordCount',title:'记录数',width:150,align:'center'},
                    		{field:'successCount',title:'成功记录数',width:150,align:'center'},
 						{field:'failCount',title:'失败记录数',width:150,align:'center'},

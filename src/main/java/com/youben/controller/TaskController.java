@@ -76,7 +76,7 @@ public class TaskController {
 
     @RequestMapping("/create")
     @ResponseBody
-    public JsonResult createTask(int mainTaskId,String name,String recordStartTime,String recordEndTime){
+    public JsonResult createTask(int mainTaskId,String name,String recordStartTime,String recordEndTime,boolean continueLast){
         Task task=new Task();
         task.setMainTaskId(mainTaskId);
         task.setFailCount(0);
@@ -94,6 +94,13 @@ public class TaskController {
             end = sdf.parse(recordEndTime);
         } catch (ParseException e) {
             e.printStackTrace();
+        }
+
+        if(continueLast){
+           Task lastTask =taskService.findLastTask(mainTaskId);
+           if(lastTask!=null) {
+               start = lastTask.getRecordModifyTimeEnd();
+           }
         }
 
         //task.setRecordCount(taskService.countRecord(mainTaskId,recordStartTime,recordEndTime));

@@ -29,6 +29,16 @@ public class Task extends GenericEntity {
     private String recordModifyTimeBeginStr;
     private String recordModifyTimeEndStr;
 
+    private boolean continueLast;
+
+    public boolean isContinueLast() {
+        return continueLast;
+    }
+
+    public void setContinueLast(boolean continueLast) {
+        this.continueLast = continueLast;
+    };
+
     public String getMainTaskName() {
         return mainTaskName;
     }
