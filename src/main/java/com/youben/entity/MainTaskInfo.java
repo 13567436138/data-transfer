@@ -11,6 +11,7 @@ import java.util.Date;
  * Time: 13:54
  */
 public class MainTaskInfo extends GenericEntity {
+    private int mainTaskId;
     private String tableName;
     private int fromRecordCount;
     private Date fromRecordEalyDate;
@@ -18,6 +19,23 @@ public class MainTaskInfo extends GenericEntity {
     private int toRecordCount;
     private Date toRecordEalyDate;
     private Date toRecordLateDate;
+    private String mainTaskName;
+
+    public String getMainTaskName() {
+        return mainTaskName;
+    }
+
+    public void setMainTaskName(String mainTaskName) {
+        this.mainTaskName = mainTaskName;
+    }
+
+    public int getMainTaskId() {
+        return mainTaskId;
+    }
+
+    public void setMainTaskId(int mainTaskId) {
+        this.mainTaskId = mainTaskId;
+    }
 
     public String getTableName() {
         return tableName;

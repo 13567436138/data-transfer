@@ -15,6 +15,24 @@ public class DatabaseInfo extends GenericEntity {
     private int recordCount;
     private Date recordEalyDate;
     private Date recordLateDate;
+    private int sourceId;
+    private String sourceName;
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+
+    public int getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(int sourceId) {
+        this.sourceId = sourceId;
+    }
 
     public String getTableName() {
         return tableName;

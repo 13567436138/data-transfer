@@ -1,7 +1,16 @@
 package com.youben.controller;
 
+import com.youben.base.PaginateResult;
+import com.youben.base.Pagination;
+import com.youben.entity.DatabaseInfo;
+import com.youben.entity.Datasource;
+import com.youben.service.DatabaseInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Description:
@@ -12,4 +21,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/transfer/databaseinfo")
 @Controller
 public class DatabaseInfoController {
+    @Autowired
+    private DatabaseInfoService databaseInfoService;
+
+    @RequestMapping("/list")
+    public String list(){
+        return "admins/transferManager/databaseInfo";
+    }
+
+    @RequestMapping("/list/data")
+    @ResponseBody
+    public PaginateResult<DatabaseInfo> listData(DatabaseInfo databaseInfo, Pagination pagination, HttpServletRequest request){
+        return databaseInfoService.findPage(pagination, databaseInfo);
+    }
 }

@@ -13,7 +13,6 @@ insert into menu(pid,menuName,menuDesc,`link`,`order`)values(-1,'系统管理','
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='系统管理')a),'菜单管理','菜单管理','/menu/list',1);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='系统管理')a),'数据源管理','数据源管理','/datasource/list',2);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values(-1,'导数据管理','导数据管理',null,2);
-insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'发起导数据','发起导数据','/transfer/new',1);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'主任务列表','主任务列表','/transfer/mainTask/list',2);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'数据库透视','数据库透视','/transfer/databaseInfo/list',3);
 insert into menu(pid,menuName,menuDesc,`link`,`order`)values((select a.menuId from (select menuId from menu where menuName='导数据管理')a),'任务列表','任务列表','/transfer/task/list',4);
@@ -77,7 +76,8 @@ create table taskthread(
 
 drop table if exists databaseinfo;
 create table databaseinfo(
-   id int primary key auto_increment,
+   id int(11) primary key auto_increment,
+   sourceId int(11),
    tableName varchar(128),
    recordCount int(11),
    recordEalyDate datetime,
@@ -86,7 +86,8 @@ create table databaseinfo(
 
 drop table if exists maintaskinfo;
 create table maintaskinfo(
-    id int primary key auto_increment,
+    id int(11) primary key auto_increment,
+    mainTaskId int(11),
     tableName varchar(128),
     fromRecordCount int(11),
     fromRecordEalyDate datetime,

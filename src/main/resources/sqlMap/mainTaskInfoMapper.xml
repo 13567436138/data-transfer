@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.youben.mapper.MainTaskInfoMapper">
-
+    <resultMap id="mainTaskInfoMap" type="MainTaskInfo">
+        <result property="id" column="id"/>
+        <result property="mainTaskId" column="mainTaskId"/>
+        <result property="tableName" column="tableName"/>
+        <result property="fromRecordCount" column="fromRecordCount"/>
+        <result property="fromRecordEalyDate" column="fromRecordEalyDate"/>
+        <result property="fromRecordLateDate" column="fromRecordLateDate"/>
+        <result property="toRecordCount" column="toRecordCount"/>
+        <result property="toRecordEalyDate" column="toRecordEalyDate"/>
+        <result property="toRecordLateDate" column="toRecordLateDate"/>
+    </resultMap>
+    <select id="findList" parameterType="MainTaskInfo" resultMap="mainTaskInfoMap">
+        select
+        *
+        from maintaskinfo d
+        <where>
+            mainTaskId=#{mainTaskId}
+        </where>
+    </select>
 </mapper>
 

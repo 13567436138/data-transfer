@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.youben.mapper.DatabaseInfoMapper">
+    <resultMap id="databaseInfoMap" type="DatabaseInfo">
+        <result column="id" property="id"/>
+        <result column="sourceId" property="sourceId"/>
+        <result column="tableName" property="tableName"/>
+        <result column="recordCount" property="recordCount"/>
+        <result column="recordEalyDate" property="recordEalyDate"/>
+        <result column="recordLateDate" property="recordLateDate"/>
+    </resultMap>
 
+    <select id="findList" parameterType="DatabaseInfo" resultMap="databaseInfoMap">
+        select
+          *
+        from databaseinfo d
+        <where>
+           sourceId=#{sourceId}
+        </where>
+    </select>
 </mapper>
 
