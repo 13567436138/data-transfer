@@ -10,7 +10,7 @@
    var searchUrl = "${contextPath}/transfer/mainTask/list/data";
    var updateUrl = "${contextPath}/departments/update.do";
    var insertUrl = "${contextPath}/transfer/mainTask/add";
-   var deleteUrl = "${contextPath}/departments/delete.do";
+   var deleteUrl = "${contextPath}/transfer/mainTask/delete";
 	$(function() {
 	    $('#dataList').datagrid({  
 	        title:'列表',  
@@ -141,7 +141,7 @@
                    if(typeof jsonParam.clearHandler  === "function")
                        jsonParam.clearHandler();
                    else
-                       $('#addwindow').dialog('close');
+                       $('#createTaskWindow').dialog('close');
                }
            }]});
        $('#createTaskWindow').dialog('open');

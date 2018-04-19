@@ -30,7 +30,7 @@ public class DataTransferConst {
     public static final int TASKTHREAD_STATUS_FAIL=4;
     public static final int TASKTHREAD_STATUS_RERUN=5;
     public static final int TASKTHREAD_STATUS_RERUN_FAIL=6;
-    public static final int TASKTHREAD_STATUS_RERUN_SUCCESS=6;
+    public static final int TASKTHREAD_STATUS_RERUN_SUCCESS=7;
 
 
 

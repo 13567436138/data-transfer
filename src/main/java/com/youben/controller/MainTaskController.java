@@ -54,4 +54,12 @@ public class MainTaskController {
         return mainTaskService.findAll();
     }
 
+    @RequestMapping("/delete")
+    @ResponseBody
+    public JsonResult delete(String ids){
+        mainTaskService.delete(ids);
+        JsonResult result=new JsonResult();
+        result.setResult("ok");
+        return  result;
+    }
 }

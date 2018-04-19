@@ -47,5 +47,9 @@
     <select id="selectAll"  resultMap="mainTaskMap">
         select * from maintask;
     </select>
+
+    <delete id="delete" parameterType="String" >
+        delete from maintask where id=#{id}
+    </delete>
 </mapper>
 

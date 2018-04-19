@@ -192,8 +192,10 @@ public class DoTransferThread extends Thread {
             ps3.setTimestamp(2,new java.sql.Timestamp(toDate.getTime()));
             rs3=ps3.executeQuery();
             if(rs3.next()){
-                successCount++;
                 int count=rs3.getInt(1);
+                if(count==0){
+                    return successCount;
+                }
                 String singleValue="(";
                 for(int k=0;k<typeList.size();k++){
                     singleValue+="?,";
@@ -218,7 +220,8 @@ public class DoTransferThread extends Thread {
                 }
             }
 
-            ps4.executeUpdate();
+            int count=ps4.executeUpdate();
+            successCount+=count;
 
             fromDate=toDate;
 
