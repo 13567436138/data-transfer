@@ -174,4 +174,14 @@ public class TaskServiceImpl extends GenericServiceImpl<Task> implements TaskSer
     public Task findLastTask(int mainTaskId) {
         return taskMapper.findLastTask(mainTaskId);
     }
+
+    @Override
+    public Date computeTaskStartTime(int taskId) {
+        return taskMapper.computeTaskStartTime(taskId);
+    }
+
+    @Override
+    public Date computeTaskEndTime(int taskId) {
+        return taskMapper.computeTaskEndTime(taskId);
+    }
 }

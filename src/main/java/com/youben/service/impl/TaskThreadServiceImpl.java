@@ -8,6 +8,8 @@ import com.youben.service.TaskThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Description:
  * User: hxp
@@ -22,5 +24,10 @@ public class TaskThreadServiceImpl extends GenericServiceImpl<TaskThread> implem
     public TaskThreadServiceImpl(TaskThreadMapper taskThreadMapper) {
         super(taskThreadMapper);
         this.taskThreadMapper=taskThreadMapper;
+    }
+
+    @Override
+    public List<TaskThread> findByTaskId(int taskId) {
+        return taskThreadMapper.findByTaskId(taskId);
     }
 }

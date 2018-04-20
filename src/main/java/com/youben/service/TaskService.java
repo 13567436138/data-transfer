@@ -3,6 +3,7 @@ package com.youben.service;
 import com.youben.base.GenericService;
 import com.youben.entity.Task;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,4 +18,6 @@ public interface TaskService extends GenericService<Task> {
     void updateStatusById(int id,int status);
     List<Task> findByMainTaskId(int mainTaskId);
     Task findLastTask(int mainTaskId);
+    Date computeTaskStartTime(int taskId);
+    Date computeTaskEndTime(int taskId);
 }

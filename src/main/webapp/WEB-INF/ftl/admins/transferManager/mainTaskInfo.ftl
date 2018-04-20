@@ -70,7 +70,8 @@
 									return "";
 								}
 							}
-						}
+						},
+                	{field:'finishPercent',title:'完成百分比',width:100,align:'center'},
 	        ]],
 	        
 	         onBeforeLoad: function (params) {

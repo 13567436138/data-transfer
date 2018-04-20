@@ -102,5 +102,9 @@
             runCount=#{runCount}
             where id=#{id}
     </update>
+
+    <select id="findByTaskId" parameterType="int" resultMap="taskThreadMap">
+        select * from taskthread where taskId=#{taskId}
+    </select>
 </mapper>
 

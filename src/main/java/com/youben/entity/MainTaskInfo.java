@@ -20,6 +20,15 @@ public class MainTaskInfo extends GenericEntity {
     private Date toRecordEalyDate;
     private Date toRecordLateDate;
     private String mainTaskName;
+    private String finishPercent;
+
+    public String getFinishPercent() {
+        return finishPercent;
+    }
+
+    public void setFinishPercent(String finishPercent) {
+        this.finishPercent = finishPercent;
+    }
 
     public String getMainTaskName() {
         return mainTaskName;

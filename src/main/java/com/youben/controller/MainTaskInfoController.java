@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Description:
@@ -33,7 +34,17 @@ public class MainTaskInfoController {
     @RequestMapping("/list/data")
     @ResponseBody
     public PaginateResult<MainTaskInfo> listData(MainTaskInfo maintaskInfo, Pagination pagination, HttpServletRequest request){
-        return mainTaskInfoService.findPage(pagination, maintaskInfo);
+        PaginateResult<MainTaskInfo> mainTaskInfoPaginateResult= mainTaskInfoService.findPage(pagination, maintaskInfo);
+        List<MainTaskInfo> mainTaskInfoList=mainTaskInfoPaginateResult.getRows();
+        for(int i=0;i<mainTaskInfoList.size();i++){
+            MainTaskInfo mainTaskInfo=mainTaskInfoList.get(i);
+            if(mainTaskInfo.getFromRecordCount()==0){
+                mainTaskInfo.setFinishPercent("100%");
+            }else{
+                mainTaskInfo.setFinishPercent((mainTaskInfo.getToRecordCount()*1.0/mainTaskInfo.getFromRecordCount()*100)+"%");
+            }
+        }
+        return mainTaskInfoPaginateResult;
     }
 
     @RequestMapping("/update")

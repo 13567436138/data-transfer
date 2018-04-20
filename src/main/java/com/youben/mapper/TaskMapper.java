@@ -5,6 +5,7 @@ import com.youben.base.GenericMapper;
 import com.youben.entity.Task;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,4 +20,6 @@ public interface TaskMapper extends GenericMapper<Task> {
     void updateStatusById(@Param( "id")int id,@Param("status") int status);
     List<Task> findByMainTaskId(int mainTaskId);
     Task findLastTask(int mainTaskId);
+    Date computeTaskStartTime(int taskId);
+    Date computeTaskEndTime(int taskId);
 }

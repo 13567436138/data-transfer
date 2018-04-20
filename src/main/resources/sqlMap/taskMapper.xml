@@ -96,5 +96,17 @@
     <select id="findLastTask" parameterType="int" resultMap="taskMap">
         select * from task where mainTaskId=#{mainTaskId} order by recordModifyTimeEnd desc limit 1
     </select>
+
+    <select id="selectAll" resultMap="taskMap">
+        select startTime from taskthread where taskId=#{taskId} order by startTime limit 1
+    </select>
+
+    <select id="computeTaskStartTime" parameterType="int" resultType="java.util.Date">
+        select stopTime from taskthread where taskId=#{taskId} order by stopTime desc limit 1
+    </select>
+
+    <select id="computeTaskEndTime" parameterType="int" resultType="java.util.Date">
+
+    </select>
 </mapper>
 

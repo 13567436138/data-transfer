@@ -5,6 +5,8 @@ import com.youben.base.GenericMapper;
 import com.youben.entity.Task;
 import com.youben.entity.TaskThread;
 
+import java.util.List;
+
 /**
  * Description:
  * User: hxp
@@ -13,4 +15,5 @@ import com.youben.entity.TaskThread;
  */
 @MyBatisDao
 public interface TaskThreadMapper extends GenericMapper<TaskThread>{
+    List<TaskThread> findByTaskId(int taskId);
 }
