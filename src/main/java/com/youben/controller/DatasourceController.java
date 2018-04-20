@@ -78,4 +78,10 @@ public class DatasourceController extends GenericController {
     public List<Datasource> queryByType(int type){
         return datasourceService.queryByType(type);
     }
+
+    @RequestMapping("/all")
+    @ResponseBody
+    public List<Datasource> all(){
+        return datasourceService.findAll();
+    }
 }

@@ -4,6 +4,7 @@ import com.youben.base.PaginateResult;
 import com.youben.base.Pagination;
 import com.youben.entity.DatabaseInfo;
 import com.youben.entity.Datasource;
+import com.youben.entity.JsonResult;
 import com.youben.service.DatabaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,5 +34,14 @@ public class DatabaseInfoController {
     @ResponseBody
     public PaginateResult<DatabaseInfo> listData(DatabaseInfo databaseInfo, Pagination pagination, HttpServletRequest request){
         return databaseInfoService.findPage(pagination, databaseInfo);
+    }
+
+    @ResponseBody
+    @RequestMapping("/update")
+    public JsonResult update(int sourceId){
+        databaseInfoService.updateBySourceId(sourceId);
+        JsonResult jsonResult=new JsonResult();
+        jsonResult.setResult("ok");
+        return jsonResult;
     }
 }

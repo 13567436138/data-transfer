@@ -10,4 +10,7 @@ import com.youben.entity.DatabaseInfo;
  * Time: 14:01
  */
 public interface DatabaseInfoService extends GenericService<DatabaseInfo> {
+
+    void updateBySourceId(int sourceId);
+
 }
