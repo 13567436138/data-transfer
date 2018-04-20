@@ -7,7 +7,7 @@
    <base id="base" href="${contextPath}">  
    <#include "/common/common.ftl">
    <script type="text/javascript"  charset="UTF-8">
-   var searchUrl = "${contextPath}/transfer/maintaskinfo/list/data";
+   var searchUrl = "${contextPath}/transfer/mainTaskInfo/list/data";
    var updateUrl = "${contextPath}/departments/update.do";
    var insertUrl = "${contextPath}/transfer/mainTask/add";
    var deleteUrl = "${contextPath}/departments/delete.do";

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  * Date: 2018-04-19
  * Time: 14:06
  */
-@RequestMapping("/transfer/databaseinfo")
+@RequestMapping("/transfer/databaseInfo")
 @Controller
 public class DatabaseInfoController {
     @Autowired

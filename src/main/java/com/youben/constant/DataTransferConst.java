@@ -19,7 +19,7 @@ public class DataTransferConst {
     public static final int TASK_STATUS_RERUN_FAIL=7;
 
     public static final int COUNT_PER_THREAD=1000000;
-    public static final int COUNT_PER_QUERY=100;
+    public static final int COUNT_PER_QUERY=10000;
 
     public static final int DO_JOB_TYPE_NEW=1;
     public static final int DO_JOB_TYPE_REDO=2;

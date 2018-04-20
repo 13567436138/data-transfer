@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  * Time: 14:07
  */
 @Controller
-@RequestMapping("/transfer/maintaskinfo")
+@RequestMapping("/transfer/mainTaskInfo")
 public class MainTaskInfoController {
     @Autowired
     private MainTaskInfoService mainTaskInfoService;
