@@ -48,6 +48,13 @@
         )
     </insert>
 
+    <update id="updateByPrimaryKey" parameterType="Task">
+        update task set
+          startTime=#{startTime},
+          stopTime=#{stopTime}
+        where id=#{id}
+    </update>
+
     <select id="findList" parameterType="Task" resultMap="taskMap">
         select
           a.*,
@@ -98,15 +105,15 @@
     </select>
 
     <select id="selectAll" resultMap="taskMap">
-        select startTime from taskthread where taskId=#{taskId} order by startTime limit 1
+        select * from task
     </select>
 
     <select id="computeTaskStartTime" parameterType="int" resultType="java.util.Date">
-        select stopTime from taskthread where taskId=#{taskId} order by stopTime desc limit 1
+      select startTime from taskthread where taskId=#{taskId} and  startTime is not null order by startTime limit 1
     </select>
 
     <select id="computeTaskEndTime" parameterType="int" resultType="java.util.Date">
-
+      select stopTime from taskthread where taskId=#{taskId} and stopTime is not null  order by stopTime desc limit 1
     </select>
 </mapper>
 
