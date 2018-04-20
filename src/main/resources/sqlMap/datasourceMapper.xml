@@ -90,5 +90,9 @@
     <select id="selectByPrimaryKey" parameterType="String"  resultMap="datasourceMap">
         select * from datasource where id=#{id}
     </select>
+
+    <select id="selectAll" resultMap="datasourceMap">
+        select * from datasource
+    </select>
 </mapper>
 

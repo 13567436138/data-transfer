@@ -8,15 +8,37 @@
         <result column="recordCount" property="recordCount"/>
         <result column="recordEalyDate" property="recordEalyDate"/>
         <result column="recordLateDate" property="recordLateDate"/>
+        <result column="sourceName" property="sourceName"/>
     </resultMap>
 
     <select id="findList" parameterType="DatabaseInfo" resultMap="databaseInfoMap">
         select
-          *
-        from databaseinfo d
+          d.*,
+          s.name sourceName
+        from databaseinfo d join datasource  s on d.sourceId=s.id
         <where>
-           sourceId=#{sourceId}
+           d.sourceId=#{sourceId}
         </where>
     </select>
+    <select id="getByTableName" parameterType="map" resultMap="databaseInfoMap">
+        select * from databaseinfo where sourceId=#{sourceId} and tableName=#{tableName}
+    </select>
+    <insert id="insert" parameterType="DatabaseInfo">
+        INSERT into databaseinfo(sourceId,tableName,recordCount,recordEalyDate,recordLateDate)values(
+          #{sourceId},
+          #{tableName},
+          #{recordCount},
+          #{recordEalyDate},
+          #{recordLateDate}
+        )
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="DatabaseInfo">
+        update databaseinfo SET
+         tableName= #{tableName},
+         recordCount= #{recordCount},
+         recordEalyDate= #{recordEalyDate},
+         recordLateDate= #{recordLateDate}
+        where id=#{id}
+    </update>
 </mapper>
 

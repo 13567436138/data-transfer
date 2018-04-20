@@ -9,7 +9,7 @@
    <script type="text/javascript"  charset="UTF-8">
    var searchUrl = "${contextPath}/transfer/databaseInfo/list/data";
    var updateUrl = "${contextPath}/departments/update.do";
-   var insertUrl = "${contextPath}/transfer/mainTask/add";
+   var insertUrl = "${contextPath}/transfer/databaseInfo/update";
    var deleteUrl = "${contextPath}/departments/delete.do";
 	$(function() {
 	    $('#dataList').datagrid({  
@@ -34,8 +34,24 @@
                    		{field:'sourceName',title:'数据源名称',width:500,align:'center'},
                    		{field:'tableName',title:'表名',width:300,align:'center'},
                    		{field:'recordCount',title:'表记录数',width:100,align:'center'},
-						{field:'recordEalyDate',title:'表记录最早时间',width:200,align:'center'},
-						{field:'recordLateDate',title:'表记录最晚时间',width:200,align:'center'}
+						{field:'recordEalyDate',title:'表记录最早时间',width:150,align:'center',formatter:function(value,row,index) {
+								if (value > 0) {
+									var unixTimestamp = new Date(value);
+									return unixTimestamp.getFullYear() + "-" + (unixTimestamp.getMonth() + 1) + "-" + unixTimestamp.getDate()+" "+unixTimestamp.getHours()+":"+unixTimestamp.getMinutes()+":"+unixTimestamp.getSeconds();
+								}else{
+									return "";
+								}
+							}
+						},
+						{field:'recordLateDate',title:'表记录最晚时间',width:150,align:'center',formatter:function(value,row,index) {
+								if (value > 0) {
+									var unixTimestamp = new Date(value);
+									return unixTimestamp.getFullYear() + "-" + (unixTimestamp.getMonth() + 1) + "-" + unixTimestamp.getDate()+" "+unixTimestamp.getHours()+":"+unixTimestamp.getMinutes()+":"+unixTimestamp.getSeconds();
+								}else{
+									return "";
+								}
+							}
+						}
 	        ]],
 	        
 	         onBeforeLoad: function (params) {
@@ -58,6 +74,20 @@
 	    });
 
 
+        $.ajax({
+            type: "GET",
+            url: "${contextPath}/datasource/all",
+            data: {type:2},
+            dataType: "json",
+            success: function(datas){
+                for(var i=0;i<datas.length;i++){
+                    var data=datas[i];
+                    $("#sourceId").append("<option value='"+data.id+"'>"+data.name+"</option>")
+					$("#querySourceId").append("<option value='"+data.id+"'>"+data.name+"</option>")
+                }
+            }
+        });
+
 	});
 
 
@@ -69,12 +99,14 @@
 		<div id='dataList'>
 			<div id="tb" style="padding:5px;height:auto">
 		<div style="margin-bottom:5px">
-			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="showUpdate({title:'更新',readonlyFields:['id']});">修改</a>|
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="showAddwindow({title:'更新'});">更新</a>|
 		</div>
 		<div>
 			<form  id='searchForm' action="" method="post">
-				名称:
-				<input type="text" id="name" name="name"/>
+				数据源:
+                <select id="querySourceId"  name="sourceId">
+
+                </select>
 				<input type="button" onclick="loadList(1);" value="查询"/>
 			</form>
 		</div>
@@ -87,25 +119,14 @@
 			<form id='addForm' action="" method="post">
 				<table>
 						<tr>
-							<td>任务名称:</td>
-							<td><input type="text" id="name" name="name" style="width:420px"/></td>
-						</tr>
-						<tr>
-							<td>来源:</td>
+							<td>数据源:</td>
 							<td>
-								<select id="fromSource" name="fromSource" style="width:420px">
+								<select id="sourceId"  name="sourceId">
 
 								</select>
 							</td>
 						</tr>
-						<tr>
-							<td>目标:</td>
-                            <td>
-								<select id="toSource" name="toSource" style="width:420px">
 
-								</select>
-							</td>
-						</tr>
 						
 				</table>
 			</form>
