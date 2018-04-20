@@ -37,7 +37,7 @@ public class TaskThreadController {
     private MainTaskService mainTaskService;
     @Autowired
     private DatasourceService datasourceService;
-    private ExecutorService executorService= Executors.newFixedThreadPool(10);
+    private ExecutorService executorService= Executors.newFixedThreadPool(100);
 
 
     @RequestMapping("/list")

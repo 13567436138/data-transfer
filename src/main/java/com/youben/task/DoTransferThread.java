@@ -206,6 +206,7 @@ public class DoTransferThread extends Thread {
                     valuesSql+=singleValue+",";
                 }
                 valuesSql=valuesSql.substring(0,valuesSql.length()-1);
+                successCount+=count;
             }
 
             insertSql+=valuesSql;
@@ -220,8 +221,7 @@ public class DoTransferThread extends Thread {
                 }
             }
 
-            int count=ps4.executeUpdate();
-            successCount+=count;
+            ps4.executeUpdate();
 
             fromDate=toDate;
 
