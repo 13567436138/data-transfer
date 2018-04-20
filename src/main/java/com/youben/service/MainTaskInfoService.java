@@ -11,4 +11,5 @@ import com.youben.entity.MainTaskInfo;
  * Time: 14:04
  */
 public interface MainTaskInfoService extends GenericService<MainTaskInfo> {
+    void updateBymainTaskId(int mainTaskId);
 }

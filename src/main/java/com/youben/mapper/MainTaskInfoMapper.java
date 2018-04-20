@@ -3,6 +3,7 @@ package com.youben.mapper;
 import com.youben.anno.MyBatisDao;
 import com.youben.base.GenericMapper;
 import com.youben.entity.MainTaskInfo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * Description:
@@ -12,4 +13,5 @@ import com.youben.entity.MainTaskInfo;
  */
 @MyBatisDao
 public interface MainTaskInfoMapper extends GenericMapper<MainTaskInfo> {
+    MainTaskInfo getByTableName(@Param("mainTaskId")int mainTaskId,@Param("tableName") String tableName);
 }

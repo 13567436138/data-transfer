@@ -14,11 +14,46 @@
     </resultMap>
     <select id="findList" parameterType="MainTaskInfo" resultMap="mainTaskInfoMap">
         select
-        *
-        from maintaskinfo d
+        d.*,
+        m.name mainTaskName
+        from maintaskinfo d join maintask m on d.mainTaskId=m.id
         <where>
-            mainTaskId=#{mainTaskId}
+            d.mainTaskId=#{mainTaskId}
         </where>
     </select>
+    <select id="getByTableName" parameterType="map" resultMap="mainTaskInfoMap">
+        select * from maintaskinfo where mainTaskId=#{mainTaskId} and tableName=#{tableName}
+    </select>
+    <update id="updateByPrimaryKey" parameterType="MainTaskInfo">
+        update maintaskinfo SET
+        fromRecordCount=#{fromRecordCount},
+        fromRecordEalyDate=#{fromRecordEalyDate},
+        fromRecordLateDate=#{fromRecordLateDate},
+        toRecordCount=#{toRecordCount},
+        toRecordEalyDate=#{toRecordEalyDate},
+        toRecordLateDate=#{toRecordLateDate}
+        where id=#{id}
+    </update>
+    <insert id="insert" parameterType="MainTaskInfo">
+        insert into maintaskinfo(
+        mainTaskId,
+        tableName,
+        fromRecordCount,
+        fromRecordEalyDate,
+        fromRecordLateDate,
+        toRecordCount,
+        toRecordEalyDate,
+        toRecordLateDate
+        )values(
+        #{mainTaskId},
+        #{tableName},
+        #{fromRecordCount},
+        #{fromRecordEalyDate},
+        #{fromRecordLateDate},
+        #{toRecordCount},
+        #{toRecordEalyDate},
+        #{toRecordLateDate}
+        )
+    </insert>
 </mapper>
 

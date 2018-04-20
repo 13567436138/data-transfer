@@ -3,6 +3,7 @@ package com.youben.controller;
 import com.youben.base.PaginateResult;
 import com.youben.base.Pagination;
 import com.youben.entity.DatabaseInfo;
+import com.youben.entity.JsonResult;
 import com.youben.entity.MainTaskInfo;
 import com.youben.service.MainTaskInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,14 @@ public class MainTaskInfoController {
     @ResponseBody
     public PaginateResult<MainTaskInfo> listData(MainTaskInfo maintaskInfo, Pagination pagination, HttpServletRequest request){
         return mainTaskInfoService.findPage(pagination, maintaskInfo);
+    }
+
+    @RequestMapping("/update")
+    @ResponseBody
+    public JsonResult update(int mainTaskId){
+        mainTaskInfoService.updateBymainTaskId(mainTaskId);
+        JsonResult jsonResult=new JsonResult();
+        jsonResult.setResult("ok");
+        return jsonResult;
     }
 }
